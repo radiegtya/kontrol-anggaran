@@ -1,0 +1,471 @@
+/* 
+    Created on : Dec 9, 2014, 2:35:52 PM
+    Author     : Shepherd
+*/
+/*@import url(http://fonts.googleapis.com/css?family=Roboto:400,300italic,100,500,400italic,700,900,300);*/
+@font-face {
+  font-family: Roboto;
+  src: url(../font/roboto/Roboto-Thin.ttf);
+  font-weight: 100; }
+@font-face {
+  font-family: Roboto;
+  src: url(../font/roboto/Roboto-Light.ttf);
+  font-weight: 300; }
+@font-face {
+  font-family: Roboto;
+  src: url(../font/roboto/Roboto-Regular.ttf);
+  font-weight: 400; }
+@font-face {
+  font-family: Roboto;
+  src: url(../font/roboto/Roboto-Medium.ttf);
+  font-weight: 500; }
+@font-face {
+  font-family: Roboto;
+  src: url(../font/roboto/Roboto-Bold.ttf);
+  font-weight: 700; }
+@font-face {
+  font-family: Roboto;
+  src: url(../font/roboto/Roboto-Black.ttf);
+  font-weight: 900; }
+.color-primary, a {
+  color: #E5772C; }
+
+.color-text, .panel .panel-header h3, html, body, .content > header .title {
+  color: #212121; }
+
+.color-text-secondary, .content .toolbar .btn-link {
+  color: #727272; }
+
+/*IMPORT*/
+aside {
+  background: #2E3037;
+  width: 90px; }
+  aside header {
+    height: 70px;
+    background: #E5772C;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    padding: 0 30px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; }
+    aside header span {
+      display: none; }
+  aside .logo {
+    position: relative;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    font-size: 13px; }
+    aside .logo i {
+      flex: 0 0 30px;
+      /*border: 1px solid #030288;*/
+      width: 30px;
+      background-image: url("../images/kementrian_pekerjaan_umum.png");
+      background-repeat: no-repeat;
+      background-size: 30px 30px;
+      background-position: center center;
+      display: block;
+      min-height: 30px; }
+    aside .logo img {
+      width: 60px; }
+    aside .logo span {
+      overflow: hidden;
+      margin-left: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; }
+    aside .logo:hover {
+      color: #fff; }
+  aside .sf-menu > li > a {
+    text-align: center; }
+  aside .sf-menu > li > a > span {
+    display: none; }
+
+aside.maximized {
+  width: 18%; }
+  aside.maximized header .logo span {
+    display: flex; }
+  aside.maximized header .logo img {
+    width: 90px; }
+  aside.maximized header .logo:hover {
+    text-decoration: none; }
+  aside.maximized .sf-menu > li > a {
+    text-align: left; }
+  aside.maximized .sf-menu > li > a > span {
+    display: inline-block; }
+
+nav li i {
+  /*@extend .main-transition;*/ }
+
+.sf-vertical {
+  width: 100%; }
+
+.sf-menu li {
+  background: #2E3037; }
+  .sf-menu li a {
+    color: #5D6372;
+    border-width: 1px 0 1px 0;
+    border-color: #35373f;
+    letter-spacing: 1px;
+    padding: 20px 30px;
+    overflow: hidden; }
+    .sf-menu li a span {
+      margin-left: 10px; }
+.sf-menu li:hover, .sf-menu li.active {
+  background: #393941; }
+  .sf-menu li:hover > a, .sf-menu li.active > a {
+    color: #fff; }
+    .sf-menu li:hover > a i, .sf-menu li.active > a i {
+      color: #E5772C; }
+.sf-menu ul {
+  overflow: auto; }
+  .sf-menu ul li {
+    background: #2E3037; }
+
+/* 
+    Created on : Feb 18, 2015, 4:23:20 PM
+    Author     : Pras Abdilah
+*/
+input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .uneditable-input {
+  border-radius: 0;
+  /*box-shadow: none;*/ }
+
+select {
+  border-radius: 0; }
+
+.input-prepend {
+  display: flex; }
+  .input-prepend .add-on {
+    border-radius: 0 !important; }
+
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Oct 30, 2014, 11:56:45 AM
+    Author     : piyiku
+*/
+.panel {
+  border: 1px solid #DADADA;
+  background: #fff;
+  position: relative;
+  margin-bottom: 15px; }
+  .panel .panel-header {
+    background: #F6F6F6;
+    padding: 10px 20px;
+    border-bottom: 1px solid #DADADA;
+    display: flex; }
+    .panel .panel-header .btn {
+      margin-right: 10px; }
+    .panel .panel-header h3 {
+      margin: 0;
+      font-size: 100%;
+      line-height: 20px;
+      padding: 0; }
+    .panel .panel-header .buttons {
+      font-size: 12px; }
+      .panel .panel-header .buttons a {
+        display: inline-block;
+        cursor: pointer;
+        color: #bababa; }
+      .panel .panel-header .buttons a:hover {
+        text-decoration: none; }
+  .panel .panel-body {
+    padding: 15px 20px 20px; }
+
+.panel-right {
+  min-width: 300px;
+  margin-left: 30px; }
+
+.slider {
+  height: 20px;
+  position: relative;
+  background: #cacaca;
+  text-align: center; }
+  .slider span {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0; }
+  .slider label {
+    position: relative;
+    display: block;
+    z-index: 2;
+    font-weight: bold;
+    font-size: 80%;
+    color: #fff; }
+
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 16, 2014, 2:28:39 PM
+    Author     : Shepherd
+*/
+.btn {
+  border-radius: 2px;
+  box-shadow: none;
+  font-weight: 500;
+  text-shadow: none; }
+
+.btn.btn-primary {
+  background: #E5772C;
+  border-color: #af5416;
+  color: #fff; }
+  .btn.btn-primary:hover, .btn.btn-primary:focus {
+    background: #e88643;
+    border-color: #c65f18; }
+  .btn.btn-primary:active {
+    background: #c65f18;
+    border-color: #984913; }
+
+/* 
+    Created on : Feb 13, 2015, 5:52:11 PM
+    Author     : Pras Abdilah
+*/
+.charts {
+  text-align: center;
+  /*    .chart-item:nth-of-type(3n-1) .bar-chart span{
+          background: #FF9100;
+      }
+      .chart-item:nth-of-type(3n) .bar-chart span{
+          background: #FFAB40;
+      }*/ }
+  .charts .chart-item {
+    /*border: 1px solid #222;*/
+    border-bottom: none;
+    display: flex;
+    margin-bottom: 5px; }
+    .charts .chart-item a {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 20%;
+      text-align: right;
+      padding-right: 10px;
+      color: #7B909E;
+      font-weight: bold;
+      font-size: 85%; }
+    .charts .chart-item .bar-chart-container {
+      flex: 1 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; }
+      .charts .chart-item .bar-chart-container .bar-chart {
+        display: flex;
+        position: relative;
+        background: #EDF0F0; }
+        .charts .chart-item .bar-chart-container .bar-chart span {
+          display: inline-block;
+          height: 40px;
+          background: #E5772C; }
+        .charts .chart-item .bar-chart-container .bar-chart label {
+          display: inline-block;
+          position: absolute;
+          right: 0;
+          top: 0;
+          padding: 10px;
+          font-weight: bold;
+          font-size: 140%;
+          color: #293541; }
+  .charts .chart-item:last-of-type {
+    /*border-bottom: 1px solid #222;*/ }
+  .charts .chart-item:hover .bar-chart span {
+    background: #eb9459;
+    box-shadow: 1px 1px #dc691b; }
+  .charts .chart-legend {
+    display: inline-block;
+    margin: 20px;
+    border: 1px solid #dadada;
+    font-size: 13px;
+    padding: 10px; }
+    .charts .chart-legend span {
+      display: flex;
+      line-height: 1; }
+      .charts .chart-legend span i {
+        display: inline-block;
+        width: 13px;
+        height: 13px;
+        margin-right: 3px; }
+    .charts .chart-legend span.a {
+      margin-bottom: 5px; }
+      .charts .chart-legend span.a i {
+        background: #E5772C; }
+    .charts .chart-legend span.b i {
+      background: #EDF0F0; }
+
+.popover {
+  z-index: 99999999; }
+  .popover .popover-title {
+    display: none; }
+  .popover table {
+    width: 100%; }
+  .popover td, .popover th {
+    padding: 0;
+    line-height: 1.5;
+    font-size: 80%;
+    font-weight: normal; }
+  .popover tr th:last-child {
+    text-align: right; }
+
+.main-transition, aside, aside .logo img, aside .logo span, aside.maximized, nav, nav li, .date-container {
+  transition: all 0.3s ease-out; }
+
+.flex {
+  display: flex; }
+  .flex .flex-start {
+    align-self: flex-start;
+    flex: 1 1; }
+  .flex .flex-end {
+    align-self: flex-end;
+    flex: 1 1; }
+
+.bg-success {
+  background: #2ecc71; }
+
+.bg-warning {
+  background: #f39c12; }
+
+.bg-danger {
+  background: #c0392b; }
+
+.padding {
+  padding: 20px; }
+
+.text-right {
+  text-align: right !important; }
+
+.text-left {
+  text-align: left  !important; }
+
+html, body {
+  position: relative;
+  min-height: 100vh;
+  background: url("../images/tumblr_mucvs3nuDt1sksh39o1_500.jpg") no-repeat;
+  background-size: 100% 100%; }
+
+body {
+  font-size: 15px;
+  font-family: 'Roboto', arial;
+  font-weight: 400;
+  color: #758698;
+  padding: 0 !important;
+  box-sizing: border-box; }
+
+a:hover, a:visited {
+  color: #e88643; }
+a:active {
+  color: #dc691b; }
+a:visited {
+  color: #984913; }
+
+.table {
+  background: #fff; }
+
+.wrapper {
+  display: flex;
+  position: relative;
+  min-height: calc(100vh - 80px); }
+
+.date-container {
+  display: none;
+  width: 50px;
+  background: #dc691b; }
+  .date-container.active {
+    display: block; }
+
+.content {
+  flex: 1 1;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column; }
+  .content .toolbar {
+    padding: 10px 20px;
+    background: #F6F6F6;
+    position: relative;
+    z-index: 2;
+    border-bottom: 1px solid #DADADA; }
+    .content .toolbar .btn-link {
+      font-weight: normal; }
+      .content .toolbar .btn-link:hover {
+        text-decoration: none;
+        border: 1px solid #DADADA; }
+  .content > header {
+    height: 70px;
+    border-bottom: 1px solid #ccc; }
+
+.content > header {
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+  position: relative;
+  display: flex; }
+  .content > header > * {
+    margin: 0 30px;
+    display: flex;
+    flex-direction: row;
+    align-self: center; }
+  .content > header .search {
+    width: 70px;
+    color: #bdccd3;
+    font-size: 200%;
+    line-height: 70px;
+    text-align: center;
+    border-right: 1px solid #304047; }
+  .content > header .title {
+    font-size: 120%;
+    font-weight: 300;
+    flex: 1 1; }
+  .content > header .username {
+    color: #E5772C;
+    text-transform: capitalize;
+    font-weight: 500; }
+
+.post-container {
+  flex: 1 1;
+  overflow-y: auto;
+  background: #ECF0F1; }
+  .post-container.padding {
+    padding: 20px; }
+
+.panel .summary {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10; }
+
+/*CONTROL*/
+.panel-up {
+  display: none; }
+
+header .dropdown-menu {
+  left: auto;
+  right: 0; }
+
+@media screen and (min-width: 48em) {
+  body {
+    padding: 0 !important; } }
+@media screen and (min-width: 62em) {
+  body {
+    padding: 0 !important; } }
+@media screen and (min-width: 75em) {
+  body {
+    padding: 40px !important; } }
+th a {
+  color: #212121; }
+  th a:hover {
+    color: #424242; }
+
+.grid-view {
+  padding-top: 0; }
+
+.realization-form tr label {
+  white-space: nowrap; }
+
+/*# sourceMappingURL=style.css.map */

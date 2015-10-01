@@ -1,0 +1,6 @@
+# yii all assets dir
+/assets
+
+# yii runtime/application.log file
+/protected/runtime/application.log
+/nbproject/private/

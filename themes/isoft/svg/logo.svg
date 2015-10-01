@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64px"
+   height="64px"
+   id="svg3210"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="paperplane.svg">
+  <defs
+     id="defs3212">
+    <linearGradient
+       id="SVGID_8_"
+       gradientUnits="userSpaceOnUse"
+       x1="2578.583"
+       y1="1139.8418"
+       x2="2533.1294"
+       y2="1239.84"
+       gradientTransform="matrix(-1,0,0,1,4138.8867,0)">
+      <stop
+         offset="0"
+         style="stop-color:#DBA43D"
+         id="stop62" />
+      <stop
+         offset="1"
+         style="stop-color:#C27B0E"
+         id="stop64" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.75"
+     inkscape:cx="-15.242097"
+     inkscape:cy="78.611833"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:window-width="1600"
+     inkscape:window-height="839"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata3215">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <g
+       transform="matrix(0.12602048,0,0,0.12602048,-158.67591,-120.42635)"
+       id="Plane">
+      <polygon
+         style="fill:#f2ca27"
+         points="1759.602,1077.427 1368.818,1206.275 1277.255,1150.305 "
+         id="polygon59" />
+      <linearGradient
+         id="linearGradient3158"
+         gradientUnits="userSpaceOnUse"
+         x1="2578.583"
+         y1="1139.8418"
+         x2="2533.1294"
+         y2="1239.84"
+         gradientTransform="matrix(-1,0,0,1,4138.8867,0)">
+        <stop
+           offset="0"
+           style="stop-color:#DBA43D"
+           id="stop3160" />
+        <stop
+           offset="1"
+           style="stop-color:#C27B0E"
+           id="stop3162" />
+      </linearGradient>
+      <polygon
+         style="fill:url(#SVGID_8_)"
+         points="1368.818,1206.275 1427.478,1348.492 1759.602,1077.427 "
+         id="polygon66" />
+      <polygon
+         style="fill:#936037"
+         points="1427.478,1348.492 1759.602,1077.427 1418.748,1231.359 "
+         id="polygon68" />
+      <polygon
+         style="fill:#f2ca27"
+         points="1759.602,1077.427 1566.821,1328.891 1418.748,1231.359 "
+         id="polygon70" />
+    </g>
+  </g>
+</svg>

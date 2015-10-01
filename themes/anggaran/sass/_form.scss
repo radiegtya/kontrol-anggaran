@@ -1,0 +1,22 @@
+/* 
+    Created on : Feb 18, 2015, 4:23:20 PM
+    Author     : Pras Abdilah
+*/
+input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .uneditable-input{
+    border-radius: 0;
+    /*box-shadow: none;*/
+}
+select{
+    border-radius: 0;
+}
+.input-prepend{
+    display: flex;
+    .add-on{
+        border-radius: 0 !important;
+    }
+}
+
+
+.table td select, .table td .form-control{
+    width: 100%;
+}

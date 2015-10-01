@@ -1,0 +1,180 @@
+///* 
+//    Created on : Dec 16, 2014, 2:28:39 PM
+//    Author     : Shepherd
+//*/
+
+$nav-bg: #2E3037;
+
+aside{
+    background: $nav-bg;
+    @extend .main-transition;
+    width: 90px;
+
+    header{
+        height: $header-height;
+        background: $color-primary;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        padding: 0 30px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        span{
+            display: none;
+        }
+    }
+    .logo{
+        position: relative;
+        color: rgba(255,255,255,0.9);
+        text-transform: uppercase;
+        font-size: 13px;
+
+        i{
+            flex: 0 0 30px;
+            /*border: 1px solid #030288;*/
+            width: 30px;
+            background-image: url('../images/kementrian_pekerjaan_umum.png');
+            background-repeat: no-repeat;
+            background-size: 30px 30px;
+            background-position: center center;
+            display: block;
+            min-height: 30px;
+        }
+        img{
+            width: 60px;
+            @extend .main-transition;
+        }
+        span{
+            @extend .main-transition;
+            overflow: hidden;
+            margin-left: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        &:hover{
+            color: #fff;
+        }
+    } 
+    .sf-menu > li > a{
+        text-align: center;
+    }
+    .sf-menu > li > a > span{
+        display: none;
+    }
+}
+
+aside.maximized{
+    @extend .main-transition;
+    width: 18%;
+
+    header{
+        .logo{
+            span{
+                display: flex;
+            }
+            img{
+                width: 90px;
+            }
+        } 
+        .logo:hover{
+            text-decoration: none;
+        }
+    }
+    .sf-menu > li > a{
+        text-align: left;
+    }
+    .sf-menu > li > a > span{
+        display: inline-block;
+    }
+}
+
+
+nav{
+    @extend .main-transition;
+
+    li{
+        @extend .main-transition;
+
+        a{
+
+        }
+
+        i{
+            /*@extend .main-transition;*/
+
+        }
+        span{
+
+
+        }
+    }
+
+    li.active{
+        a{
+
+
+            i{
+            }
+            span{
+
+            }
+        }
+    }
+
+    li:hover{
+        & > a{
+        }
+    }
+
+    li:first-child,
+        li.active + li{
+        a{
+        }
+    }
+}
+
+
+
+.sf-vertical{
+    width: 100%;
+
+}
+.sf-menu{
+    li{
+        background: $nav-bg;
+        a{
+            color: #5D6372;
+            border-width: 1px 0 1px 0;
+            border-color: lighten($nav-bg, 3%);
+            letter-spacing: 1px;
+            padding: 20px 30px;
+            overflow: hidden;
+
+            span{
+                margin-left: 10px;
+            }
+        }
+    }
+
+
+    li:hover, li.active{
+        background: #393941;
+        & > a{
+            color:#fff;
+
+            i{
+                color: $color-primary;
+            }
+        }
+    }
+
+    ul{
+        overflow: auto;
+        li{
+            background: $nav-bg;
+        }
+    }
+}

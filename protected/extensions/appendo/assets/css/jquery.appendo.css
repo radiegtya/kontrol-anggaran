@@ -1,0 +1,18 @@
+.appendoButtons { background: black; margin-left:10px;}
+/*.appendoButtons { background: #79B4DC; margin-left:10px;}*/
+.appendoButtons button {
+    margin-right:10px;    
+    background:white;
+    font-weight:bold;
+    font-size: 80%;
+}
+.appendo-gii{
+    font-size: 85%;
+}
+
+.appendo-gii table{
+    border: 0;
+    border-width: 1px;
+    border-collapse: collapse;
+}
+

@@ -1,0 +1,46 @@
+/* 
+    Created on : Nov 11, 2014, 1:12:35 AM
+    Author     : Shepherd
+*/
+table.bordered-table {
+  border: 1px solid #cccccc; }
+
+.table-no-border tr th {
+  border: none; }
+.table-no-border tr td {
+  border: none; }
+
+.table-h-border tr th {
+  border-bottom: 1px solid #cccccc; }
+.table-h-border tr td {
+  border-bottom: 1px solid #cccccc; }
+
+.table-v-border tr th {
+  border-top: none;
+  border-left: 1px solid #cccccc; }
+.table-v-border tr td {
+  border-top: none;
+  border-left: 1px solid #cccccc; }
+.table-v-border tr th:first-child, .table-v-border tr td:first-child {
+  border-left: none; }
+.table-v-border tbody + tbody {
+  border: none; }
+.table-v-border + .table-v-border {
+  border: none; }
+
+table.table-vh-border tr th {
+  border-left: 1px solid #cccccc; }
+table.table-vh-border tr td {
+  border-left: 1px solid #cccccc; }
+table.table-vh-border tr th:first-child, table.table-vh-border tr td:first-child {
+  border-left: none; }
+
+@-moz-document url-prefix() {
+  fieldset {
+    display: table-cell; } }
+.table-responsive {
+  min-height: .01%;
+  overflow-x: auto; }
+
+.table .no-border {
+  border: none; }
