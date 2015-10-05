@@ -24,7 +24,7 @@ class RealizationController extends Controller {
      * @return array access control rules
      */
     public function accessRules() {
-        return VAuth::getAccessRules('realization', array('clear', 'export', 'entry', 'import', 'clearError', 'getPackageAccountOptionsCodeName'));
+        return VAuth::getAccessRules('realization', array('clear', 'export', 'entry', 'import', 'clearError', 'exportError'));
     }
 
     /**
@@ -445,6 +445,32 @@ class RealizationController extends Controller {
     }
 
     /**
+     * Export data form
+     */
+    public function actionExportError() {
+        /** Get model */
+        $models = ErrorRealization::model()->findAll();
+        /** Error reporting */
+        $this->excelErrorReport();
+
+        /** PHPExcel_IOFactory */
+        $objReader = new PHPExcel;
+        $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+        $path = Yii::app()->basePath . '/../export/realizationError.xlsx';
+        $pathExport = Yii::app()->basePath . '/../files/Error Realisasi.xlsx';
+        $objPHPExcel = $objReader->load($path);
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        /* " Add new data to template" */
+        $this->exportExcelError($objPHPExcel, $models);
+        /** Export to excel* */
+        $this->excel($objPHPExcel, $pathExport);
+        readfile($pathExport);
+        unlink($pathExport);
+        exit;
+    }
+
+    /**
      * PHP Excel error report
      */
     public function excelErrorReport() {
@@ -490,6 +516,29 @@ class RealizationController extends Controller {
                 $sheet->setCellValue('E' . $row, $model->limit);
                 $sheet->setCellValue('F' . $row, PackageAccount::model()->getTotal("$model->code")['realization']);
                 $sheet->setCellValue('G' . $row, 0);
+            }
+        }
+        $objPHPExcel->getActiveSheet()->setTitle('Realisasi');
+    }
+
+    //Write data to excel cell
+    private function exportExcelError($objPHPExcel, $models) {
+        $sheet = $objPHPExcel->getActiveSheet();
+        $row = 1;
+        if ($models) {
+            foreach ($models as $data) {
+                $limit[$data->packageAccount_code] = 0;
+                $realization[$data->packageAccount_code] = 0;
+                $rest[$data->packageAccount_code] = 0;
+
+                $pAccount = PackageAccount::model()->findByAttributes(array('code' => "$data->packageAccount_code"));
+                
+                $sheet->setCellValue('A' . ++$row, $data->packageAccount_code);
+                $sheet->setCellValue('B' . $row, $pAccount->limit);
+                $sheet->setCellValue('C' . $row, PackageAccount::model()->getTotal($pAccount->code)['realization']);
+                $sheet->setCellValue('D' . $row, PackageAccount::model()->getTotal($pAccount->code)['restMoney']);
+                $sheet->setCellValue('E' . $row, $data->total_spm);
+                $sheet->setCellValue('F' . $row, $data->description);
             }
         }
         $objPHPExcel->getActiveSheet()->setTitle('Realisasi');

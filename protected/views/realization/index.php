@@ -37,7 +37,8 @@
             <a href="<?php echo yii::app()->baseUrl; ?>/realization/entry" class="btn btn-primary"><i class="fa fa-fw fa-plus"></i> Entry Data</a>
             <a href="<?php echo yii::app()->baseUrl; ?>/realization/export" class="btn btn-primary"><i class="fa fa-fw fa-download"></i> Download Form</a>
             <a href="<?php echo yii::app()->baseUrl; ?>/realization/import" class="btn btn-primary"><i class="fa fa-fw fa-upload"></i> Import Data</a>
-            <a href="<?php echo yii::app()->baseUrl; ?>/realization/clearError" onclick="return confirm('Yakin ingin menghapus semua data error realisasi?')" class="btn btn-primary"><i class="fa fa-fw fa-trash"></i> Hapus Notifikasi Error</a>
+            <a href="<?php echo yii::app()->baseUrl; ?>/realization/exportError" class="btn btn-danger"><i class="fa fa-fw fa-print"></i> Export Error</a>
+            <a href="<?php echo yii::app()->baseUrl; ?>/realization/clearError" onclick="return confirm('Yakin ingin menghapus semua data error realisasi?')" class="btn btn-danger"><i class="fa fa-fw fa-trash"></i> Hapus Notifikasi Error</a>
 
         </div>
         <div class="panel-body">
