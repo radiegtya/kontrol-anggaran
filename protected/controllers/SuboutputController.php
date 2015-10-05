@@ -24,7 +24,7 @@ class SuboutputController extends Controller {
      * @return array access control rules
      */
     public function accessRules() {
-        return VAuth::getAccessRules('suboutput', array('import', 'export', 'clear'));
+        return VAuth::getAccessRules('suboutput', array('import', 'export', 'clear', 'exportError'));
     }
 
     /**
@@ -338,7 +338,7 @@ class SuboutputController extends Controller {
             $whereInSuboutput = [];
             foreach ($realizationsError as $r) {
                 $codeArray = explode(".", $r->package_code);
-                $code = $codeArray[0] . "." . $codeArray[1] . "." . $codeArray[2] . "." . $codeArray[3];//get only package code till latest 3 dot (.)
+                $code = $codeArray[0] . "." . $codeArray[1] . "." . $codeArray[2] . "." . $codeArray[3]; //get only package code till latest 3 dot (.)
                 array_push($whereInSuboutput, $code);
             }
             $criteria = new CDbCriteria();
@@ -418,6 +418,32 @@ class SuboutputController extends Controller {
         $objReader = PHPExcel_IOFactory::createReader('Excel2007');
         $path = Yii::app()->basePath . '/../export/suboutput.xlsx';
         $pathExport = Yii::app()->basePath . '/../files/Master Suboutput.xlsx';
+        $objPHPExcel = $objReader->load($path);
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        /* " Add new data to template" */
+        $this->exportExcel($objPHPExcel, $models);
+        /** Export to excel* */
+        $this->excel($objPHPExcel, $pathExport);
+        readfile($pathExport);
+        unlink($pathExport);
+        exit;
+    }
+
+    /**
+     * Export Error Data to Excel
+     */
+    public function actionExportError() {
+        /** Get model */
+        $models = SuboutputError::model()->findAll();
+        /** Error reporting */
+        $this->excelErrorReport();
+
+        /** PHPExcel_IOFactory */
+        $objReader = new PHPExcel;
+        $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+        $path = Yii::app()->basePath . '/../export/suboutput.xlsx';
+        $pathExport = Yii::app()->basePath . '/../files/Error Suboutput.xlsx';
         $objPHPExcel = $objReader->load($path);
         $objPHPExcel->setActiveSheetIndex(0);
 

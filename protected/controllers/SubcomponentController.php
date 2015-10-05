@@ -24,7 +24,7 @@ class SubcomponentController extends Controller {
      * @return array access control rules
      */
     public function accessRules() {
-        return VAuth::getAccessRules('subcomponent', array('export', 'import', 'clear', 'updates'));
+        return VAuth::getAccessRules('subcomponent', array('export', 'import', 'clear', 'updates', 'exportError'));
     }
 
     /**
@@ -431,6 +431,32 @@ class SubcomponentController extends Controller {
         $objReader = PHPExcel_IOFactory::createReader('Excel2007');
         $path = Yii::app()->basePath . '/../export/subcomponent.xlsx';
         $pathExport = Yii::app()->basePath . '/../files/Master Subkomponen.xlsx';
+        $objPHPExcel = $objReader->load($path);
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        /* " Add new data to template" */
+        $this->exportExcel($objPHPExcel, $models);
+        /** Export to excel* */
+        $this->excel($objPHPExcel, $pathExport);
+        readfile($pathExport);
+        unlink($pathExport);
+        exit;
+    }
+    
+    /**
+     * Export Data to Excel
+     */
+    public function actionExportError() {
+        /** Get model */
+        $models = SubcomponentError::model()->findAll();
+        /** Error reporting */
+        $this->excelErrorReport();
+
+        /** PHPExcel_IOFactory */
+        $objReader = new PHPExcel;
+        $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+        $path = Yii::app()->basePath . '/../export/subcomponent.xlsx';
+        $pathExport = Yii::app()->basePath . '/../files/Error Subkomponen.xlsx';
         $objPHPExcel = $objReader->load($path);
         $objPHPExcel->setActiveSheetIndex(0);
 

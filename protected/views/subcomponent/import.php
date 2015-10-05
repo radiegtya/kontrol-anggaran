@@ -30,8 +30,13 @@
             ?>
         </div>
 
-        <?php $this->endWidget(); ?>
-        
+        <?php $this->endWidget(); ?>                
+    </div>
+
+    <div class="panel-header">
+        <a href="<?php echo yii::app()->baseUrl; ?>/subcomponent/exportError" class="btn btn-primary"><i class="fa fa fa-download"></i> Export Error</a>
+    </div>
+    <div class="panel-body">
         <h2>Daftar Error Import</h2>
 
         <?php
