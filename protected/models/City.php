@@ -127,4 +127,17 @@ class City extends VAbstractActiveRecord {
         return $options;
     }
 
+    public function getProvinceGroupOptions() {
+        $models = City::model()->findAll();
+        $options = array();
+        foreach ($models as $model) {
+            array_push($options, [
+                'code' => $model->code,
+                'name' => $model->name,
+                'group' => $model->province->name
+            ]);
+        }
+        return CHtml::listData($options, 'code', 'name', 'group');
+    }
+
 }
