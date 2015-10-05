@@ -102,8 +102,16 @@ class SuboutputController extends Controller {
                 $this->importExcelToMysql($filePath, $fields);
             }
         }
+
+        //get suboutput error lists
+        $suboutputError = new SuboutputError('search');
+        $suboutputError->unsetAttributes();  // clear any default values
+        if (isset($_GET['SuboutputError']))
+            $suboutputError->attributes = $_GET['SuboutputError'];
+
         $this->render('import', array(
             'model' => $model,
+            'suboutputError' => $suboutputError
         ));
     }
 
@@ -224,6 +232,10 @@ class SuboutputController extends Controller {
             if ($validated == TRUE) {
                 $highestRow = $worksheet->getHighestRow(); // e.g. 10
                 $isSuccess = FALSE;
+
+                //check if RKAKL data subcomponent already removed, but app master data already realize        
+                $this->validateRemovedData($filePath, $fields, $worksheet, $highestRow, $startingRow);
+
                 for ($row = $startingRow; $row <= $highestRow; ++$row) {
                     $attributes = array();
                     for ($col = 0; $col < count($fields); ++$col) {
@@ -270,7 +282,7 @@ class SuboutputController extends Controller {
                     unlink($filePath);
                     Yii::app()->user->setFlash('success', "File berhasil diimport ke dalam master");
                     $this->redirect(array('index'));
-                }else{
+                } else {
                     unlink($filePath);
                     Yii::app()->user->setFlash('error', "Mohon masukkan data secara lengkap.");
                 }
@@ -282,21 +294,114 @@ class SuboutputController extends Controller {
         }
     }
 
+    //check if RKAKL data suboutput already removed, but app master data already realize    
+    private function validateRemovedData($filePath, $fields = array(), $worksheet, $highestRow, $startingRow = 2) {
+        /* ===== (IMPORT DATA CHECKER) check if RKAKL data suboutput already removed, but app master data already realize === */
+        //clear SuboutputError table if exists
+        $exist = SuboutputError::model()->exists();
+        if ($exist)
+            Yii::app()->db->createCommand()->truncateTable(SuboutputError::model()->tableName());
+
+        $suboutputCodeFromExcel = [];
+        for ($row = $startingRow; $row <= $highestRow; ++$row) {
+            $attributes = array();
+            for ($col = 0; $col < count($fields); ++$col) {
+                $val = $worksheet->getCellByColumnAndRow($fields[$col]['col'], $row)->getValue();
+                $attributes[$fields[$col]['name']] = $val;
+            }
+
+            //(IMPORT DATA CHECKER) get all excel suboutput
+            $code = $attributes['satker_code'] . "." . $attributes['activity_code'] . "." . $attributes['output_code'] . "." . $attributes['code'];
+            array_push($suboutputCodeFromExcel, $code);
+        }
+
+        // (IMPORT DATA CHECKER) compare excel.suboutput with current data suboutput removed
+        $criteria = new CDbCriteria();
+        $criteria->addNotInCondition('code', $suboutputCodeFromExcel);
+        $removedSuboutputs = Suboutput::model()->findAll($criteria);
+
+//        //(IMPORT DATA CHECKER) compare $removedSuboutputs with realization.package_code
+//        $removedSuboutputsArray = [];
+//        foreach ($removedSuboutputs as $r) {
+//            array_push($removedSuboutputsArray, $r->code);
+//        }
+
+        if (count($removedSuboutputs) > 0) {
+            $criteria = new CDbCriteria();
+//            $criteria->addInCondition('package_code', $removedSuboutputsArray);
+            foreach ($removedSuboutputs as $r) {
+                $criteria->addSearchCondition('package_code', $r->code, true, 'OR');
+            }
+            $realizationsError = Realization::model()->findAll($criteria);
+
+            //insert to SuboutputError table
+            $whereInSuboutput = [];
+            foreach ($realizationsError as $r) {
+                $codeArray = explode(".", $r->package_code);
+                $code = $codeArray[0] . "." . $codeArray[1] . "." . $codeArray[2] . "." . $codeArray[3];//get only package code till latest 3 dot (.)
+                array_push($whereInSuboutput, $code);
+            }
+            $criteria = new CDbCriteria();
+            $criteria->addInCondition('code', $whereInSuboutput);
+            $suboutputsError = Suboutput::model()->findAll($criteria);
+            foreach ($suboutputsError as $s) {
+                $model = new SuboutputError();
+                $model->attributes = [
+                    'code' => $s->code,
+                    'satker_code' => $s->satker_code,
+                    'activity_code' => $s->activity_code,
+                    'output_code' => $s->output_code,
+                    'name' => $s->name,
+                ];
+                $model->save();
+            }
+            if (count($suboutputsError) > 0) {
+                unlink($filePath);
+                Yii::app()->user->setFlash('error', "Terdapat data terhapus di RKAKL, dimana data tsb sudah terealisasi.");
+                $this->redirect(array('import'));
+            }
+        }
+        /* ===== EOF (IMPORT DATA CHECKER) check if RKAKL data suboutput already removed, but app master data already realize === */
+    }
+
     /**
      * Clear all data
      */
     public function actionClear() {
-        //Check record data on database
-        $exist = Suboutput::model()->exists();
-        if ($exist) {
-            //Clear Data
-            Yii::app()->db->createCommand()->truncateTable(Suboutput::model()->tableName());
-            Yii::app()->user->setFlash('success', 'Data berhasil dibersihkan.');
-            $this->redirect(array('index'));
-        } else {
-            Yii::app()->user->setFlash('error', 'Data tidak ditemukan.');
+        //validate if data already used for realization
+        $realizations = Realization::model()->findAll();
+        $realizationCodeArray = [];
+        foreach ($realizations as $r) {
+            $codeArray = explode(".", $r->package_code);
+            $code = $codeArray[0] . "." . $codeArray[1] . "." . $codeArray[2] . "." . $codeArray[3]; //get only package code till latest 3 dot (.)
+            array_push($realizationCodeArray, $code);
+        }
+
+        $criteria = new CDbCriteria();
+        $criteria->addNotInCondition('code', $realizationCodeArray);
+        $suboutputsAllowDelete = Suboutput::model()->findAll($criteria);
+
+        foreach ($suboutputsAllowDelete as $s) {
+            //remove suboutputs
+            $s->delete();
+        }
+
+        if (count($suboutputsAllowDelete) < Suboutput::model()->count()) {
+            Yii::app()->user->setFlash('error', "Terdapat beberapa data yang sudah terealisasi, sehingga data tidak bisa dihapus.");
             $this->redirect(array('index'));
         }
+
+//        //Check record data on database
+//        $exist = Suboutput::model()->exists();
+//        if ($exist) {
+//            //Clear Data
+//            Yii::app()->db->createCommand()->truncateTable(Suboutput::model()->tableName());
+//            Yii::app()->user->setFlash('success', 'Data berhasil dibersihkan.');
+//            $this->redirect(array('index'));
+//        } else {
+//            Yii::app()->user->setFlash('error', 'Data tidak ditemukan.');
+//            $this->redirect(array('index'));
+//        }
     }
 
     /**

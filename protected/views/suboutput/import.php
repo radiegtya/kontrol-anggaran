@@ -30,6 +30,43 @@
         </div>
 
         <?php $this->endWidget(); ?>
+
+        <h2>Daftar Error Import</h2>
+
+        <?php
+        $this->widget('bootstrap.widgets.TbGridView', array(
+            'id' => 'suboutput-error-grid',
+            'dataProvider' => $suboutputError->search(),
+            'filter' => $suboutputError,
+            'columns' => array(
+                array(
+                    'header' => 'No',
+                    'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
+                ),
+                array(
+                    'name' => 'satker_code',
+                    'value' => 'isset($data->satker->name)?$data->satker->name:"Not set"',
+                    'filter' => Satker::model()->getSatkerOptions(),
+                ),
+                array(
+                    'name' => 'activity_code',
+                    'value' => 'isset($data->activity->name)?$data->activity->name:"Not set"',
+                    'filter' => Activity::model()->getActivityOptions(),
+                ),
+                array(
+                    'name' => 'output_code',
+                    'value' => 'isset($data->outputCode->name)?$data->outputCode->name:$data->output_code',
+                    'filter' => Output::model()->getOutputOptions(),
+                ),
+                'code',
+                'name',
+                array(
+                    'class' => 'bootstrap.widgets.TbButtonColumn',
+                    'template' => '{view}',
+                ),
+            ),
+        ));
+        ?>
     </div>
 </div>
 
