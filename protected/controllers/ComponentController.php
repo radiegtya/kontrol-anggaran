@@ -24,7 +24,7 @@ class ComponentController extends Controller {
      * @return array access control rules
      */
     public function accessRules() {
-        return VAuth::getAccessRules('component', array('export', 'import', 'clear'));
+        return VAuth::getAccessRules('component', array('export', 'import', 'clear', 'exportError'));
     }
 
     /**
@@ -108,8 +108,16 @@ class ComponentController extends Controller {
                 $this->importExcelToMysql($filePath, $fields);
             }
         }
+
+        //get component error lists
+        $componentError = new ComponentError('search');
+        $componentError->unsetAttributes();  // clear any default values
+        if (isset($_GET['ComponentError']))
+            $componentError->attributes = $_GET['ComponentError'];
+
         $this->render('import', array(
             'model' => $model,
+            'componentError' => $componentError
         ));
     }
 
@@ -229,6 +237,10 @@ class ComponentController extends Controller {
             if ($validated == TRUE) {
                 $highestRow = $worksheet->getHighestRow();
                 $isSuccess = FALSE;
+
+                //check if RKAKL data subcomponent already removed, but app master data already realize        
+                $this->validateRemovedData($filePath, $fields, $worksheet, $highestRow, $startingRow);
+
                 for ($row = $startingRow; $row <= $highestRow; ++$row) {
                     $attributes = array();
                     for ($col = 0; $col < count($fields); ++$col) {
@@ -292,21 +304,115 @@ class ComponentController extends Controller {
         }
     }
 
+    //check if RKAKL data component already removed, but app master data already realize    
+    private function validateRemovedData($filePath, $fields = array(), $worksheet, $highestRow, $startingRow = 2) {
+        /* ===== (IMPORT DATA CHECKER) check if RKAKL data component already removed, but app master data already realize === */
+        //clear ComponentError table if exists
+        $exist = ComponentError::model()->exists();
+        if ($exist)
+            Yii::app()->db->createCommand()->truncateTable(ComponentError::model()->tableName());
+
+        $componentCodeFromExcel = [];
+        for ($row = $startingRow; $row <= $highestRow; ++$row) {
+            $attributes = array();
+            for ($col = 0; $col < count($fields); ++$col) {
+                $val = $worksheet->getCellByColumnAndRow($fields[$col]['col'], $row)->getValue();
+                $attributes[$fields[$col]['name']] = $val;
+            }
+
+            //(IMPORT DATA CHECKER) get all excel component
+            $code = $attributes['satker_code'] . "." . $attributes['activity_code'] . "." . $attributes['output_code'] . "." . $attributes['suboutput_code'] . "." . $attributes['code'];
+            array_push($componentCodeFromExcel, $code);
+        }
+
+        // (IMPORT DATA CHECKER) compare excel.component with current data component removed
+        $criteria = new CDbCriteria();
+        $criteria->addNotInCondition('code', $componentCodeFromExcel);
+        $removedComponents = Component::model()->findAll($criteria);
+
+//        //(IMPORT DATA CHECKER) compare $removedComponents with realization.package_code
+//        $removedComponentsArray = [];
+//        foreach ($removedComponents as $r) {
+//            array_push($removedComponentsArray, $r->code);
+//        }
+
+        if (count($removedComponents) > 0) {
+            $criteria = new CDbCriteria();
+//            $criteria->addInCondition('package_code', $removedComponentsArray);
+            foreach ($removedComponents as $r) {
+                $criteria->addSearchCondition('package_code', $r->code, true, 'OR');
+            }
+            $realizationsError = Realization::model()->findAll($criteria);
+
+            //insert to ComponentError table
+            $whereInComponent = [];
+            foreach ($realizationsError as $r) {
+                $codeArray = explode(".", $r->package_code);
+                $code = $codeArray[0] . "." . $codeArray[1] . "." . $codeArray[2] . "." . $codeArray[3] . "." . $codeArray[4]; //get only package code till latest 4 dot (.)
+                array_push($whereInComponent, $code);
+            }
+            $criteria = new CDbCriteria();
+            $criteria->addInCondition('code', $whereInComponent);
+            $componentsError = Component::model()->findAll($criteria);
+            foreach ($componentsError as $s) {
+                $model = new ComponentError();
+                $model->attributes = [
+                    'code' => $s->code,
+                    'satker_code' => $s->satker_code,
+                    'activity_code' => $s->activity_code,
+                    'output_code' => $s->output_code,
+                    'suboutput_code' => $s->suboutput_code,
+                    'name' => $s->name,
+                ];
+                $model->save();
+            }
+            if (count($componentsError) > 0) {
+                unlink($filePath);
+                Yii::app()->user->setFlash('error', "Terdapat data terhapus di RKAKL, dimana data tsb sudah terealisasi.");
+                $this->redirect(array('import'));
+            }
+        }
+        /* ===== EOF (IMPORT DATA CHECKER) check if RKAKL data component already removed, but app master data already realize === */
+    }
+
     /**
      * Clear all data
      */
     public function actionClear() {
-        //Check record data on database
-        $exist = Component::model()->exists();
-        if ($exist) {
-            //Clear Data
-            Yii::app()->db->createCommand()->truncateTable(Component::model()->tableName());
-            Yii::app()->user->setFlash('success', 'Data berhasil dibersihkan.');
-            $this->redirect(array('index'));
-        } else {
-            Yii::app()->user->setFlash('error', 'Data tidak ditemukan.');
+        //validate if data already used for realization
+        $realizations = Realization::model()->findAll();
+        $realizationCodeArray = [];
+        foreach ($realizations as $r) {
+            $codeArray = explode(".", $r->package_code);
+            $code = $codeArray[0] . "." . $codeArray[1] . "." . $codeArray[2] . "." . $codeArray[3]. "." . $codeArray[4]; //get only package code till latest 4 dot (.)
+            array_push($realizationCodeArray, $code);
+        }
+
+        $criteria = new CDbCriteria();
+        $criteria->addNotInCondition('code', $realizationCodeArray);
+        $componentsAllowDelete = Component::model()->findAll($criteria);
+
+        foreach ($componentsAllowDelete as $s) {
+            //remove components
+            $s->delete();
+        }
+
+        if (count($componentsAllowDelete) < Component::model()->count()) {
+            Yii::app()->user->setFlash('error', "Terdapat beberapa data yang sudah terealisasi, sehingga data tidak bisa dihapus.");
             $this->redirect(array('index'));
         }
+
+//        //Check record data on database
+//        $exist = Component::model()->exists();
+//        if ($exist) {
+//            //Clear Data
+//            Yii::app()->db->createCommand()->truncateTable(Component::model()->tableName());
+//            Yii::app()->user->setFlash('success', 'Data berhasil dibersihkan.');
+//            $this->redirect(array('index'));
+//        } else {
+//            Yii::app()->user->setFlash('error', 'Data tidak ditemukan.');
+//            $this->redirect(array('index'));
+//        }
     }
 
     /**
@@ -323,6 +429,32 @@ class ComponentController extends Controller {
         $objReader = PHPExcel_IOFactory::createReader('Excel2007');
         $path = Yii::app()->basePath . '/../export/component.xlsx';
         $pathExport = Yii::app()->basePath . '/../files/Master Komponen.xlsx';
+        $objPHPExcel = $objReader->load($path);
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        /* " Add new data to template" */
+        $this->exportExcel($objPHPExcel, $models);
+        /** Export to excel* */
+        $this->excel($objPHPExcel, $pathExport);
+        readfile($pathExport);
+        unlink($pathExport);
+        exit;
+    }
+    
+    /**
+     * Export Data to Excel
+     */
+    public function actionExportError() {
+        /** Get model */
+        $models = ComponentError::model()->findAll();
+        /** Error reporting */
+        $this->excelErrorReport();
+
+        /** PHPExcel_IOFactory */
+        $objReader = new PHPExcel;
+        $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+        $path = Yii::app()->basePath . '/../export/component.xlsx';
+        $pathExport = Yii::app()->basePath . '/../files/Error Komponen.xlsx';
         $objPHPExcel = $objReader->load($path);
         $objPHPExcel->setActiveSheetIndex(0);
 
