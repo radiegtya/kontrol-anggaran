@@ -24,7 +24,7 @@ class RealizationController extends Controller {
      * @return array access control rules
      */
     public function accessRules() {
-        return VAuth::getAccessRules('realization', array('clear', 'export', 'entry', 'import', 'clearError'));
+        return VAuth::getAccessRules('realization', array('clear', 'export', 'entry', 'import', 'clearError', 'getPackageAccountOptionsCodeName'));
     }
 
     /**
@@ -225,7 +225,7 @@ class RealizationController extends Controller {
         if (isset($_POST['packageAccount_code'])) {
             $total = count($_POST['packageAccount_code']);
             for ($i = 0; $i <= $total; $i++) {
-                if (isset($_POST['packageAccount_code'][$i]) && $_POST['packageAccount_code'][$i] != NULL && $_POST['total_spm'][$i] != NULL && $_POST['spm_number'][$i] != NULL && $_POST['spm_date'][$i] != NULL) {
+                if (isset($_POST['packageAccount_code'][$i]) && $_POST['packageAccount_code'][$i] != NULL && $_POST['total_spm'][$i] != NULL) {
                     $overlimit = PackageAccount::model()->overlimit($_POST['packageAccount_code'][$i], $_POST['total_spm'][$i]);
                     $code = $_POST['packageAccount_code'][$i];
                     $packageAccount = PackageAccount::model()->findByAttributes(array('code' => "$code"));
@@ -255,10 +255,12 @@ class RealizationController extends Controller {
                         $data->spm_date = $_POST['spm_date'][$i];
                         $data->up_ls = $_POST['up_ls'][$i];
                         $data->save();
-                        
+
                         Yii::app()->user->setFlash('success', "Data berhasil disimpan.");
                         $this->redirect(array('index'));
                     }
+                } else {
+                    Yii::app()->user->setFlash('error', "Mohon isikan Kode Akun Paket dan Total SPM.");
                 }
             }
         }
@@ -491,6 +493,10 @@ class RealizationController extends Controller {
             }
         }
         $objPHPExcel->getActiveSheet()->setTitle('Realisasi');
+    }
+
+    public function actionGetPackageAccountOptionsCodeName() {
+        echo json_encode(PackageAccount::model()->getOptionsCodeName());
     }
 
 }

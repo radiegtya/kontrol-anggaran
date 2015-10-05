@@ -11,13 +11,13 @@
     <tbody>
         <?php if ($model->packageAccount_code == null): ?>
             <tr>
-                <td><?php echo CHtml::dropDownList('packageAccount_code[]', "string", PackageAccount::model()->getOptionsCodeName(), array('prompt' => 'Pilih', 'class' => 'packageAccount_code')); ?> </td>
+                <td><?php echo CHtml::dropDownList('packageAccount_code[]', "string", PackageAccount::model()->getOptionsCodeName(), array('prompt' => 'Pilih', 'type' => 'selc', 'onfocus' => 'removeDuplicate()')); ?> </td>
                 <td><?php echo CHtml::textField('total_spm[]'); ?> </td>
                 <td><?php echo CHtml::textField('spm_number[]'); ?> </td>
                 <!--date picker belum nemu naroh chtml nya-->
-                <td><?php echo CHtml::textField('spm_date[]', '', array('placeholder'=>"format:yyyy-mm-dd, ex:2015-08-30")); ?> </td>
+                <td><?php echo CHtml::textField('spm_date[]', '', array('placeholder' => "format:yyyy-mm-dd, ex:2015-08-30")); ?> </td>
                 <!--date picker belum nemu naroh chtml nya-->
-                <td width="150px"><?php echo CHtml::dropDownList('up_ls[]', 'string', array('UP' => 'UP', 'LS' => 'LS'), array('options' => array())); ?> </td>
+                <td width="60px"><?php echo CHtml::dropDownList('up_ls[]', 'string', array('UP' => 'UP', 'LS' => 'LS'), array('options' => array())); ?> </td>
             </tr>
         <?php else: ?>
             <?php for ($i = 0; $i < sizeof($model->packageAccount_code); ++$i): ?>
@@ -29,3 +29,26 @@
         <?php endif; ?>
     </tbody>
 </table>
+
+<script>
+    var removeDuplicate = function() {        
+        $("select[type='selc']").find("option").each(function() {
+            var val = $(this).val();
+            var flag = false;
+
+            if (!$(this).attr('selected')) {
+                $("select[type='selc']").find("option:selected").each(function(){
+                    if ($(this).val() == val){
+                        flag = true;
+                        return;
+                    }
+                });
+            }
+
+            if (flag)
+                $(this).hide();
+            else
+                $(this).show();
+        })
+    }
+</script>
