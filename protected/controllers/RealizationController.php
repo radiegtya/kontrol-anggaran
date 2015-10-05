@@ -24,7 +24,7 @@ class RealizationController extends Controller {
      * @return array access control rules
      */
     public function accessRules() {
-        return VAuth::getAccessRules('realization', array('clear', 'export', 'entry'));
+        return VAuth::getAccessRules('realization', array('clear', 'export', 'entry', 'import', 'clearError'));
     }
 
     /**
@@ -201,7 +201,73 @@ class RealizationController extends Controller {
         }
     }
 
+    public function actionClearError() {
+        //Check record data on database
+        $exist = ErrorRealization::model()->exists();
+        if ($exist) {
+            //Clear Data
+            Yii::app()->db->createCommand()->truncateTable(ErrorRealization::model()->tableName());
+            Yii::app()->user->setFlash('success', 'Notifikasi error berhasil dibersihkan.');
+            $this->redirect(array('index'));
+        } else {
+            Yii::app()->user->setFlash('error', 'Data tidak ditemukan.');
+            $this->redirect(array('index'));
+        }
+    }
+
+    /**
+     * Creates a new model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     */
     public function actionEntry() {
+        $model = new Realization;
+
+        if (isset($_POST['packageAccount_code'])) {
+            $total = count($_POST['packageAccount_code']);
+            for ($i = 0; $i <= $total; $i++) {
+                if (isset($_POST['packageAccount_code'][$i]) && $_POST['packageAccount_code'][$i] != NULL && $_POST['total_spm'][$i] != NULL && $_POST['spm_number'][$i] != NULL && $_POST['spm_date'][$i] != NULL) {
+                    $overlimit = PackageAccount::model()->overlimit($_POST['packageAccount_code'][$i], $_POST['total_spm'][$i]);
+                    $code = $_POST['packageAccount_code'][$i];
+                    $packageAccount = PackageAccount::model()->findByAttributes(array('code' => "$code"));
+                    $packageCode = NULL;
+                    if ($packageAccount) {
+                        $packageCode = $packageAccount->package_code;
+                    }
+                    if ($overlimit == TRUE) {
+                        $error = new ErrorRealization();
+                        $error->packageAccount_code = $_POST['packageAccount_code'][$i];
+                        $error->package_code = $packageCode;
+                        $error->total_spm = $_POST['total_spm'][$i];
+                        $error->spm_number = $_POST['spm_number'][$i];
+                        $error->spm_date = $_POST['spm_date'][$i];
+                        $error->up_ls = $_POST['up_ls'][$i];
+                        $error->description = "Terjadi pagu minus pada akun paket $code";
+                        $error->save();
+
+                        Yii::app()->user->setFlash('error', "Terjadi pagu minus pada akun paket $code");
+                        $this->redirect(array('index'));
+                    } else {
+                        $data = new Realization();
+                        $data->packageAccount_code = $_POST['packageAccount_code'][$i];
+                        $data->package_code = $packageCode;
+                        $data->total_spm = $_POST['total_spm'][$i];
+                        $data->spm_number = $_POST['spm_number'][$i];
+                        $data->spm_date = $_POST['spm_date'][$i];
+                        $data->up_ls = $_POST['up_ls'][$i];
+                        $data->save();
+                        
+                        Yii::app()->user->setFlash('success', "Data berhasil disimpan.");
+                        $this->redirect(array('index'));
+                    }
+                }
+            }
+        }
+        $this->render('entry', array(
+            'model' => $model,
+        ));
+    }
+
+    public function actionImport() {
         $this->title = 'Import Realisasi';
         $model = new Realization;
         if (isset($_POST['Realization'])) {
@@ -264,7 +330,7 @@ class RealizationController extends Controller {
                 $this->importExcelToMysql($filePath, $fields);
             }
         }
-        $this->render('entry', array(
+        $this->render('import', array(
             'model' => $model,
         ));
     }
