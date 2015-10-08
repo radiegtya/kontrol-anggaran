@@ -368,40 +368,40 @@ class SuboutputController extends Controller {
      * Clear all data
      */
     public function actionClear() {
-        //validate if data already used for realization
-        $realizations = Realization::model()->findAll();
-        $realizationCodeArray = [];
-        foreach ($realizations as $r) {
-            $codeArray = explode(".", $r->package_code);
-            $code = $codeArray[0] . "." . $codeArray[1] . "." . $codeArray[2] . "." . $codeArray[3]; //get only package code till latest 3 dot (.)
-            array_push($realizationCodeArray, $code);
-        }
-
-        $criteria = new CDbCriteria();
-        $criteria->addNotInCondition('code', $realizationCodeArray);
-        $suboutputsAllowDelete = Suboutput::model()->findAll($criteria);
-
-        foreach ($suboutputsAllowDelete as $s) {
-            //remove suboutputs
-            $s->delete();
-        }
-
-        if (count($suboutputsAllowDelete) < Suboutput::model()->count()) {
-            Yii::app()->user->setFlash('error', "Terdapat beberapa data yang sudah terealisasi, sehingga data tidak bisa dihapus.");
-            $this->redirect(array('index'));
-        }
-
-//        //Check record data on database
-//        $exist = Suboutput::model()->exists();
-//        if ($exist) {
-//            //Clear Data
-//            Yii::app()->db->createCommand()->truncateTable(Suboutput::model()->tableName());
-//            Yii::app()->user->setFlash('success', 'Data berhasil dibersihkan.');
-//            $this->redirect(array('index'));
-//        } else {
-//            Yii::app()->user->setFlash('error', 'Data tidak ditemukan.');
+//        //validate if data already used for realization
+//        $realizations = Realization::model()->findAll();
+//        $realizationCodeArray = [];
+//        foreach ($realizations as $r) {
+//            $codeArray = explode(".", $r->package_code);
+//            $code = $codeArray[0] . "." . $codeArray[1] . "." . $codeArray[2] . "." . $codeArray[3]; //get only package code till latest 3 dot (.)
+//            array_push($realizationCodeArray, $code);
+//        }
+//
+//        $criteria = new CDbCriteria();
+//        $criteria->addNotInCondition('code', $realizationCodeArray);
+//        $suboutputsAllowDelete = Suboutput::model()->findAll($criteria);
+//
+//        foreach ($suboutputsAllowDelete as $s) {
+//            //remove suboutputs
+//            $s->delete();
+//        }
+//
+//        if (count($suboutputsAllowDelete) < Suboutput::model()->count()) {
+//            Yii::app()->user->setFlash('error', "Terdapat beberapa data yang sudah terealisasi, sehingga data tidak bisa dihapus.");
 //            $this->redirect(array('index'));
 //        }
+
+        //Check record data on database
+        $exist = Suboutput::model()->exists();
+        if ($exist) {
+            //Clear Data
+            Yii::app()->db->createCommand()->truncateTable(Suboutput::model()->tableName());
+            Yii::app()->user->setFlash('success', 'Data berhasil dibersihkan.');
+            $this->redirect(array('index'));
+        } else {
+            Yii::app()->user->setFlash('error', 'Data tidak ditemukan.');
+            $this->redirect(array('index'));
+        }
     }
 
     /**

@@ -173,8 +173,7 @@ class DipaController extends Controller {
         }
     }
 
-    private function validateFieldExcel($filePath, $fields = array()) {
-        $objPHPExcel = PHPExcel_IOFactory::load($filePath);
+    private function validateFieldExcel($objPHPExcel, $filePath, $fields = array()) {
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
 
             //field validation
@@ -193,8 +192,7 @@ class DipaController extends Controller {
         }
     }
 
-    private function requiredFieldValidation($filePath, $fields = array()) {
-        $objPHPExcel = PHPExcel_IOFactory::load($filePath);
+    private function requiredFieldValidation($objPHPExcel, $filePath, $fields = array()) {
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             //field validation
             $fieldValidate = array();
@@ -214,8 +212,7 @@ class DipaController extends Controller {
         }
     }
 
-    private function excelNotExistButMasterExistValidation($filePath, $fields = array()) {
-        $objPHPExcel = PHPExcel_IOFactory::load($filePath);
+    private function excelNotExistButMasterExistValidation($objPHPExcel, $filePath, $fields = array()) {
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             //field validation
             $attr = array();
@@ -253,9 +250,7 @@ class DipaController extends Controller {
         }
     }
 
-    private function excelExistButMasterNotExistValidation($filePath, $fields = array()) {
-        $objPHPExcel = PHPExcel_IOFactory::load($filePath);
-
+    private function excelExistButMasterNotExistValidation($objPHPExcel, $filePath, $fields = array()) {
         //get all subcomponent
         $subcomponents = Subcomponent::model()->findAll();
         $subcomponentsCodeMasterArray = [];
@@ -280,7 +275,7 @@ class DipaController extends Controller {
         }
 
         //compare array from master and excel, then remove unique array
-        $whereInSubcomponentCode = array_unique(array_diff($subcomponentsCodeMasterArray, $subcomponentsCodeExcelArray));
+        $whereInSubcomponentCode = array_unique(array_diff($subcomponentsCodeExcelArray, $subcomponentsCodeMasterArray));
         foreach ($whereInSubcomponentCode as $r) {
             $errorDipaCompleteness = new ErrorDipaCompleteness;
             $errorDipaCompleteness->attributes = [
@@ -297,143 +292,143 @@ class DipaController extends Controller {
         }
     }
 
-    private function excelNotExistButDataAlreadyRealized($filePath, $fields = array()) {
-        $objPHPExcel = PHPExcel_IOFactory::load($filePath);
-
-        //get all budgets with latest dipa_id
-        $lastDipaId = Dipa::model()->find(["order" => "id DESC"])->id;
-        $budgets = Budget::model()->findAllByAttributes(["dipa_id" => $lastDipaId]);
-        $budgetsCodeMasterArray = [];
-        foreach ($budgets as $b) {
-            array_push($budgetsCodeMasterArray, $b->code);
-        }
-
-        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-            //field validation
-            $attr = array();
-            $highestRow = $worksheet->getHighestRow();
-            $budgetsCodeExcelArray = [];
-            for ($row = 2; $row <= $highestRow; ++$row) {
-                //Read data
-                for ($col = 0; $col < count($fields); ++$col) {
-                    $val = $worksheet->getCellByColumnAndRow($fields[$col]['col'], $row)->getValue();
-                    $attr[$fields[$col]['name']] = $val;
-                }
-                $budgetCode = trim($attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'] . "." . $attr['suboutput_code'] . "." . $attr['component_code'] . "." . $attr['subcomponent_code']) . "." . $attr['account_code'];
-                array_push($budgetsCodeExcelArray, $budgetCode);
+    private function excelNotExistButDataAlreadyRealized($objPHPExcel, $filePath, $fields = array()) {
+        if (Realization::model()->exists()) {
+            //get all budgets with latest dipa_id
+            $lastDipaId = Dipa::model()->find(["order" => "id DESC"])->id;
+            $budgets = Budget::model()->findAllByAttributes(["dipa_id" => $lastDipaId]);
+            $budgetsCodeMasterArray = [];
+            foreach ($budgets as $b) {
+                array_push($budgetsCodeMasterArray, $b->code);
             }
 
-            //compare array from master and excel, then remove unique array
-            $whereInBudgetCode = array_unique(array_diff($budgetsCodeMasterArray, $budgetsCodeExcelArray));
-            //get all code where in realization  (it means the code already realized, so cancel the process and input to db error)
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('packageAccount_code', $whereInBudgetCode);
-            $realizations = Realization::model()->findAll($criteria);
-
-
-            foreach ($realizations as $r) {
-                $budget = Budget::model()->findByAttributes(["code" => "$r->packageAccount_code"]);
-                if ($budget) {
-                    $errorDipa = new ErrorDipa;
-                    $errorDipa->attributes = [
-                        'code' => $budget->code,
-                        'budget_year' => $budget->budget_year,
-                        'satker_code' => $budget->satker_code,
-                        'activity_code' => $budget->activity_code,
-                        'output_code' => $budget->output_code,
-                        'suboutput_code' => $budget->suboutput_code,
-                        'component_code' => $budget->component_code,
-                        'subcomponent_code' => $budget->subcomponent_code,
-                        'account_code' => $budget->account_code,
-                        'total_budget_limit' => $budget->total_budget_limit,
-                    ];
-                    $errorDipa->description = "data excel RKAKL dengan kode $budget->code, terhapus namun sudah terealisasi. Tambahkan data tsb ke RKAKL";
-                    $errorDipa->save();
+            foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+                //field validation
+                $attr = array();
+                $highestRow = $worksheet->getHighestRow();
+                $budgetsCodeExcelArray = [];
+                for ($row = 2; $row <= $highestRow; ++$row) {
+                    //Read data
+                    for ($col = 0; $col < count($fields); ++$col) {
+                        $val = $worksheet->getCellByColumnAndRow($fields[$col]['col'], $row)->getValue();
+                        $attr[$fields[$col]['name']] = $val;
+                    }
+                    $budgetCode = trim($attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'] . "." . $attr['suboutput_code'] . "." . $attr['component_code'] . "." . $attr['subcomponent_code']) . "." . $attr['account_code'];
+                    array_push($budgetsCodeExcelArray, $budgetCode);
                 }
-            }
 
-            if (count($realizations) > 0) {
-                unlink($filePath);
-                Yii::app()->user->setFlash('error', 'Terdapat beberapa data excel RKAKL terhapus yang sudah direalisasikan..');
-                $this->redirect('index');
+                //compare array from master and excel, then remove unique array
+                $whereInBudgetCode = array_unique(array_diff($budgetsCodeMasterArray, $budgetsCodeExcelArray));
+                //get all code where in realization  (it means the code already realized, so cancel the process and input to db error)
+                $criteria = new CDbCriteria();
+                $criteria->addInCondition('packageAccount_code', $whereInBudgetCode);
+                $realizations = Realization::model()->findAll($criteria);
+
+                foreach ($realizations as $r) {
+                    $budget = Budget::model()->findByAttributes(["code" => "$r->packageAccount_code"]);
+                    if ($budget) {
+                        $errorDipa = new ErrorDipa;
+                        $errorDipa->attributes = [
+                            'code' => $budget->code,
+                            'budget_year' => $budget->budget_year,
+                            'satker_code' => $budget->satker_code,
+                            'activity_code' => $budget->activity_code,
+                            'output_code' => $budget->output_code,
+                            'suboutput_code' => $budget->suboutput_code,
+                            'component_code' => $budget->component_code,
+                            'subcomponent_code' => $budget->subcomponent_code,
+                            'account_code' => $budget->account_code,
+                            'total_budget_limit' => $budget->total_budget_limit,
+                        ];
+                        $errorDipa->description = "data excel RKAKL dengan kode $budget->code, terhapus namun sudah terealisasi. Tambahkan data tsb ke RKAKL";
+                        $errorDipa->save();
+                    }
+                }
+
+                if (count($realizations) > 0) {
+                    unlink($filePath);
+                    Yii::app()->user->setFlash('error', 'Terdapat beberapa data excel RKAKL terhapus yang sudah direalisasikan..');
+                    $this->redirect('index');
+                }
             }
         }
     }
 
-    private function overlimitValidation($filePath, $fields = array()) {
-        $objPHPExcel = PHPExcel_IOFactory::load($filePath);
-
-        //find all realization and get total sum of each packageAccount_code
-        $realizations = Realization::model()->findAll();
-        $realizationsArray = [];
-        for ($i = 0; $i < count($realizations); $i++) {
-            $code = $realizations[$i]->packageAccount_code;
-            $total = $realizations[$i]->total_spm;
-            if (isset($realizationsArray[$i][$code])) {
-                $realizationsArray[$i][$code] += $total;
-            } else {
-                $realizationsArray[$i][$code] = $total;
-            }
-        }
-
-        $excelPackageAccountCodeArray = [];
-        foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-            //field validation
-            $attr = array();
-            $highestRow = $worksheet->getHighestRow();
-            $budgetsCodeExcelArray = [];
-            $isSuccess = TRUE;
-            for ($row = 2; $row <= $highestRow; ++$row) {
-                //Read data
-                for ($col = 0; $col < count($fields); ++$col) {
-                    $val = $worksheet->getCellByColumnAndRow($fields[$col]['col'], $row)->getCalculatedValue();
-                    $attr[$fields[$col]['name']] = $val;
+    private function overlimitValidation($objPHPExcel, $filePath, $fields = array()) {
+        if (Realization::model()->exists()) {
+            //find all realization and get total sum of each packageAccount_code
+            $realizations = Realization::model()->findAll();
+            $realizationsArray = [];
+            for ($i = 0; $i < count($realizations); $i++) {
+                $code = $realizations[$i]->packageAccount_code;
+                $total = $realizations[$i]->total_spm;
+                if (isset($realizationsArray[$i][$code])) {
+                    $realizationsArray[$i][$code] += $total;
+                } else {
+                    $realizationsArray[$i][$code] = $total;
                 }
-                $code = $attr['code'];
-                for ($i = 0; $i < count($realizationsArray); $i++) {
-                    $budgetLimitFromExcel = $attr['total_budget_limit'];
-                    $totalRealizationFromDb = isset($realizationsArray[$i][$code]) ? $realizationsArray[$i][$code] : false;
-                    if ($totalRealizationFromDb) {
-                        if ($budgetLimitFromExcel < $totalRealizationFromDb) {
-                            //insert into table ErrorDipa
-                            $errorDipa = new ErrorDipa;
-                            $errorDipa->attributes = [
-                                'code' => $code,
-                                'budget_year' => $attr['budget_year'],
-                                'satker_code' => $attr['satker_code'],
-                                'activity_code' => $attr['satker_code'] . "." . $attr['activity_code'],
-                                'output_code' => $attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'],
-                                'suboutput_code' => $attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'] . "." . $attr['suboutput_code'],
-                                'component_code' => $attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'] . "." . $attr['suboutput_code'] . "." . $attr['component_code'],
-                                'subcomponent_code' => $attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'] . "." . $attr['suboutput_code'] . "." . $attr['component_code'] . "." . $attr['subcomponent_code'],
-                                'account_code' => $attr['account_code'],
-                                'total_budget_limit' => $budgetLimitFromExcel,
-                            ];
-                            $errorDipa->description = "Terjadi pagu minus, pastikan data excel RKAKL yg diupdate, limitnya >= total terealisasi.";
-                            $errorDipa->save();
+            }
 
-                            if ($isSuccess)
-                                $isSuccess = FALSE;
+            $excelPackageAccountCodeArray = [];
+            foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+                //field validation
+                $attr = array();
+                $highestRow = $worksheet->getHighestRow();
+                $budgetsCodeExcelArray = [];
+                $isSuccess = TRUE;
+                for ($row = 2; $row <= $highestRow; ++$row) {
+                    //Read data
+                    for ($col = 0; $col < count($fields); ++$col) {
+                        $val = $worksheet->getCellByColumnAndRow($fields[$col]['col'], $row)->getCalculatedValue();
+                        $attr[$fields[$col]['name']] = $val;
+                    }
+                    $code = $attr['code'];
+                    for ($i = 0; $i < count($realizationsArray); $i++) {
+                        $budgetLimitFromExcel = $attr['total_budget_limit'];
+                        $totalRealizationFromDb = isset($realizationsArray[$i][$code]) ? $realizationsArray[$i][$code] : false;
+                        if ($totalRealizationFromDb) {
+                            if ($budgetLimitFromExcel < $totalRealizationFromDb) {
+                                //insert into table ErrorDipa
+                                $errorDipa = new ErrorDipa;
+                                $errorDipa->attributes = [
+                                    'code' => $code,
+                                    'budget_year' => $attr['budget_year'],
+                                    'satker_code' => $attr['satker_code'],
+                                    'activity_code' => $attr['satker_code'] . "." . $attr['activity_code'],
+                                    'output_code' => $attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'],
+                                    'suboutput_code' => $attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'] . "." . $attr['suboutput_code'],
+                                    'component_code' => $attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'] . "." . $attr['suboutput_code'] . "." . $attr['component_code'],
+                                    'subcomponent_code' => $attr['satker_code'] . "." . $attr['activity_code'] . "." . $attr['output_code'] . "." . $attr['suboutput_code'] . "." . $attr['component_code'] . "." . $attr['subcomponent_code'],
+                                    'account_code' => $attr['account_code'],
+                                    'total_budget_limit' => $budgetLimitFromExcel,
+                                ];
+                                $errorDipa->description = "Terjadi pagu minus, pastikan data excel RKAKL yg diupdate, limitnya >= total terealisasi.";
+                                $errorDipa->save();
+
+                                if ($isSuccess)
+                                    $isSuccess = FALSE;
+                            }
                         }
                     }
                 }
-            }
 
-            if (!$isSuccess) {
-                unlink($filePath);
-                Yii::app()->user->setFlash('error', 'Terjadi pagu minus, pastikan data excel RKAKL yg diupdate, limitnya >= total terealisasi.');
-                $this->redirect('index');
+                if (!$isSuccess) {
+                    unlink($filePath);
+                    Yii::app()->user->setFlash('error', 'Terjadi pagu minus, pastikan data excel RKAKL yg diupdate, limitnya >= total terealisasi.');
+                    $this->redirect('index');
+                }
             }
         }
     }
 
-    private function saveDipaAlongsideBudget($model, $filePath, $fields = array()) {
+    private function saveDipaAlongsideBudget($model, $objPHPExcel, $filePath, $fields = array()) {
         $dipaId;
-        if ($model->save())
+        if ($model->save()) {
             $dipaId = $model->id;
-
-
-        $objPHPExcel = PHPExcel_IOFactory::load($filePath);
+        } else {
+            Yii::app()->user->setFlash('error', 'Mohon isikan data secara lengkap.');
+            $this->redirect('index');
+        }
 
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             //field validation
@@ -447,7 +442,8 @@ class DipaController extends Controller {
                     $attr[$fields[$col]['name']] = $val;
                 }
                 $code = $attr['code'];
-                
+                $budgetLimitFromExcel = $attr['total_budget_limit'];
+
                 //save budget
                 $budget = new Budget;
                 $budget->attributes = [
@@ -466,6 +462,9 @@ class DipaController extends Controller {
                 $budget->save();
             }
         }
+
+        Yii::app()->user->setFlash('success', 'Dipa berhasil dibuat.');
+        $this->redirect('index');
     }
 
     private function truncateAllError() {
@@ -865,6 +864,7 @@ class DipaController extends Controller {
             }
             //Define upload path
             $filePath = Yii::getPathOfAlias('webroot') . "/imports/" . $model->file;
+
             //Move file to server
             if ($model->file->saveAs($filePath)) {
                 //Import PHP Excel class
@@ -914,309 +914,38 @@ class DipaController extends Controller {
                 );
             }
 
+            $objPHPExcel = PHPExcel_IOFactory::load($filePath);
+
             //Check validity of budget year (new budget year document must be same with Last DIPA budget year)
             $this->checkYear($_POST['Dipa']['budget_year']);
 
             //Check validity of excel file field (must be same with normalized d_item excel file from RKAKL)
-            $this->validateFieldExcel($filePath, $fields);
+            $this->validateFieldExcel($objPHPExcel, $filePath, $fields);
 
             //Check whether field filled all or not
-            $this->requiredFieldValidation($filePath, $fields);
+            $this->requiredFieldValidation($objPHPExcel, $filePath, $fields);
 
             //remove all data Error first
             $this->truncateAllError();
 
+
             //Check whether data on RKAKL not exists, but exists on master
-            $this->excelNotExistButMasterExistValidation($filePath, $fields);
+            $this->excelNotExistButMasterExistValidation($objPHPExcel, $filePath, $fields);
+
 
             //Check whether data on RKAKL exists, but not exists on master
-            $this->excelExistButMasterNotExistValidation($filePath, $fields);
+            $this->excelExistButMasterNotExistValidation($objPHPExcel, $filePath, $fields);
+
 
             //Check deleted RKAKL from excel, if that data already realized
-            $this->excelNotExistButDataAlreadyRealized($filePath, $fields);
+            $this->excelNotExistButDataAlreadyRealized($objPHPExcel, $filePath, $fields);
 
             //Check whether data excel RKAKL limit updated? if yes, then check whether it is lower than current total accumulate of realization or not, 
             //if yes then cancel process
-            $this->overlimitValidation($filePath, $fields);
-
+            $this->overlimitValidation($objPHPExcel, $filePath, $fields);
 
             //if all data correct, then save to Dipa and Budget
-            $this->saveDipaAlongsideBudget($model);
-
-            echo "dadi tai";
-//                $this->importExcelTemporary($_POST['Dipa']['budget_year'], $filePath, $fields, 2);
-//                $structureValidation = $this->checkStructure();
-//                $dataCompleteness = $this->checkDataCompleteness();
-//                if ($structureValidation['operation'] == FALSE) {
-//                    unlink($filePath);
-//                    Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                    Yii::app()->user->setFlash('error', 'Terdapat error pada data yang diinputkan.');
-//                    $this->redirect(array('index'));
-//                } else {
-//                    if ($dataCompleteness['master'] == FALSE || $dataCompleteness['dipa'] == FALSE) {
-//                        //Write data anggaran yang belum diinput dalam master subkomponen
-//                        $nonRecordedBudgetOnMaster = BudgetTemp::model()->findAllBySql("SELECT budget_temp.* FROM budget_temp LEFT JOIN subcomponent ON budget_temp.subcomponent_code=subcomponent.code WHERE subcomponent.code IS NULL");
-//                        if ($nonRecordedBudgetOnMaster) {
-//                            foreach ($nonRecordedBudgetOnMaster as $emptyData) {
-//                                $description = "Kode paket $emptyData->subcomponent_code belum ada dalam master subkomponen";
-//                                $this->createErrorCompleteness($emptyData, $description);
-//                            }
-//                        }
-//                        //write non inputed subcomponent budget to error database
-//                        $packages = Subcomponent::model()->findAllBySql("SELECT subcomponent.* FROM subcomponent LEFT JOIN budget_temp ON subcomponent.code=budget_temp.subcomponent_code WHERE budget_temp.subcomponent_code IS NULL");
-//                        //@OPTIMIZE QUERY get only used field
-//                        if ($packages) {
-//                            foreach ($packages as $data) {
-//                                $description = "Data anggaran dengan kode paket [ $data->code ] belum diinput dalam dokumen DIPA/POK.";
-//                                $this->createErrorCompleteness($data, $description);
-//                            }
-//                        }
-//                        //write code here
-//                        unlink($filePath);
-//                        Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                        Yii::app()->user->setFlash('error', 'Data yang diimport belum lengkap/belum diinput dalam master subcomponen.');
-//                        $this->redirect(array('index'));
-//                    } else {
-//                        if ($structureValidation['deletedRecord'] == TRUE) {//Ada akun paket yang dihapus
-//                            $dipa = Dipa::model()->find(array('order' => 'id DESC'));
-//                            if ($dipa) {
-//                                $dipaId = $dipa->id;
-//                                $deletedBudgets = Budget::model()->findAllBySql("SELECT budget.* FROM budget LEFT JOIN budget_temp ON budget_temp.code=budget.code WHERE budget_temp.code IS NULL AND budget.dipa_id=$dipaId");
-//                                //@OPTIMIZE QUERY get only used field
-//                                $addedData = BudgetTemp::model()->findAllBySql("SELECT budget_temp.* FROM budget_temp LEFT JOIN budget ON budget.code=budget_temp.code WHERE budget.code IS NULL");
-//                                //@OPTIMIZE QUERY get only used field
-//                                $continue = TRUE;
-//                                if ($deletedBudgets) {//Cek apakah sudah ada realisasi pada akun paket yang dihapus
-//                                    foreach ($deletedBudgets as $data) {
-//                                        $statusRealization = $this->checkRealization($data->code);
-//                                        if ($continue == TRUE) {
-//                                            if ($statusRealization['exist'] == TRUE) {
-//                                                $continue = FALSE;
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                                //Eof dipa exist boolean true
-//                                if ($continue == FALSE) {//Proses input dihentikan karena pada data yag dihapus sudah ada realisasi
-//                                    foreach ($deletedBudgets as $data) {//Simpan data yang sudah terealisasi
-//                                        $statusRealization = $this->checkRealization($data->code);
-//                                        if ($statusRealization['exist'] == TRUE) {
-//                                            $description = "Anggaran dengan kode akun paket $data->code sudah direalisasikan. Tidak boleh dihapus.";
-//                                            $this->createErrorDipa($data, $description);
-//                                        }
-//                                    }
-//                                    Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                                    unlink($filePath);
-//                                    $model->save();
-//                                    Yii::app()->user->setFlash('error', 'Terjadi penghapusan pada akun paket yang sudah terealisasi.');
-//                                    $this->redirect(array('index'));
-//                                } else {//Proses input dilanjutkan karena belum ada realisasi pada data yang dihapus
-//                                    if ($addedData) {//Jika ada penambahan data
-//                                        foreach ($addedData as $data) {
-//                                            $paModel = new PackageAccount;
-//                                            $paModel->code = $data->code;
-//                                            $paModel->satker_code = $data->satker_code;
-//                                            $paModel->activity_code = $data->activity_code;
-//                                            $paModel->output_code = $data->output_code;
-//                                            $paModel->suboutput_code = $data->suboutput_code;
-//                                            $paModel->component_code = $data->component_code;
-//                                            $paModel->package_code = $data->subcomponent_code;
-//                                            $paModel->account_code = $data->account_code;
-//                                            $paModel->limit = $data->total_budget_limit;
-//                                            $package = Package::model()->findByAttributes(array('code' => "$data->subcomponent_code"));
-//                                            //@OPTIMIZE QUERY get only used field
-//                                            if ($package) {
-//                                                $paModel->ppk_code = $package->ppk_code;
-//                                                $paModel->province_code = $package->province_code;
-//                                                $paModel->city_code = $package->city_code;
-//                                            }
-//                                            $paModel->save();
-//                                        }
-//                                    }
-//                                    $temps = BudgetTemp::model()->findAll();
-//                                    //@OPTIMIZE QUERY get only used field
-//                                    if ($temps) {//Pindahkan data dari tabel temporari ke tabel budget
-//                                        $continue = TRUE;
-//                                        foreach ($temps as $data) {
-//                                            $overLimit = $this->checkRealization($data->code)['overLimit'];
-//                                            if ($continue == TRUE) {
-//                                                if ($overLimit == TRUE) {
-//                                                    $continue = FALSE;
-//                                                }
-//                                            }
-//                                        }
-//
-//                                        if ($continue == FALSE) {
-//                                            $overlimitBudgets = $this->getOverlimitBudget();
-//                                            if (count($overlimitBudgets) != 0) {
-//                                                foreach ($overlimitBudgets as $data) {
-//                                                    $description = "Terjadi pagu minus pada anggaran dengan kode $data->code";
-//                                                    $this->createErrorDipa($data, $description);
-//                                                }
-//                                                Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                                                unlink($filePath);
-//                                                $model->save();
-//                                                Yii::app()->user->setFlash('error', 'Terjadi pagu minus pada beberapa data. Mohon cek kembali.');
-//                                                $this->redirect(array('index'));
-//                                            }
-//                                        } else {
-//                                            $overlimitBudgets = $this->getOverlimitBudget();
-//                                            if (count($overlimitBudgets) != 0) {
-//                                                foreach ($overlimitBudgets as $data) {
-//                                                    $description = "Terjadi pagu minus pada anggaran dengan kode $data->code";
-//                                                    $this->createErrorDipa($data, $description);
-//                                                }
-//                                                Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                                                unlink($filePath);
-//                                                $model->save();
-//                                                Yii::app()->user->setFlash('error', 'Terjadi pagu minus pada beberapa data. Mohon cek kembali.');
-//                                                $this->redirect(array('index'));
-//                                            } else {
-//                                                foreach ($temps as $data) {
-//                                                    $budget = new Budget;
-//                                                    $budget->code = $data->code;
-//                                                    $budget->dipa_id = $data->dipa_id;
-//                                                    $budget->budget_year = $data->budget_year;
-//                                                    $budget->satker_code = $data->satker_code;
-//                                                    $budget->activity_code = $data->activity_code;
-//                                                    $budget->output_code = $data->output_code;
-//                                                    $budget->suboutput_code = $data->suboutput_code;
-//                                                    $budget->component_code = $data->component_code;
-//                                                    $budget->subcomponent_code = $data->subcomponent_code;
-//                                                    $budget->account_code = $data->account_code;
-//                                                    $budget->total_budget_limit = $data->total_budget_limit;
-//                                                    if ($budget->save()) {
-//                                                        $pacModel = PackageAccount::model()->findByAttributes(array('code' => "$budget->code"));
-//                                                        //@OPTIMIZE QUERY get only used field
-//                                                        if ($pacModel) {
-//                                                            $pacModel->limit = $budget->total_budget_limit;
-//                                                            $pacModel->update();
-//                                                        }
-//                                                    }
-//                                                    //Delete package account data with code equal to deleted budget
-//                                                    foreach ($deletedBudgets as $data) {//Hapus akun paket untuk data yang dihapus
-//                                                        $packageAccount = PackageAccount::model()->findByAttributes(array('code' => "$data->code"));
-//                                                        //@OPTIMIZE QUERY get only used field
-//                                                        if ($packageAccount) {
-//                                                            $packageAccount->delete();
-//                                                        }
-//                                                    }
-//                                                    Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                                                    unlink($filePath);
-//                                                    $model->save();
-//                                                    Yii::app()->user->setFlash('success', 'Data berhasil diimport ke database.cc');
-//                                                    $this->redirect(array('index'));
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                            //Eof exist deleted record logic
-//                        } else {//Tidak ada akun paket yang dihapus
-//                            if ($structureValidation['addedRecord'] == TRUE) {//Ada Penambahan Akun Paket
-//                                //If added package account data is exist
-//                                //Create new package account with added data 
-//                                $addedData = BudgetTemp::model()->findAllBySql("SELECT budget_temp.* FROM budget_temp LEFT JOIN budget ON budget.code=budget_temp.code WHERE budget.code IS NULL");
-//                                //@OPTIMIZE QUERY get only used field
-//                                $temps = BudgetTemp::model()->findAll();
-//                                if ($temps) {
-//                                    $overlimitBudgets = $this->getOverlimitBudget();
-//                                    if (count($overlimitBudgets) != 0) {
-//                                        foreach ($overlimitBudgets as $data) {
-//                                            $description = "Terjadi pagu minus pada anggaran dengan kode $data->code.";
-//                                            $this->createErrorDipa($data, $description);
-//                                        }
-//                                        Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                                        unlink($filePath);
-//                                        $model->save();
-//                                        Yii::app()->user->setFlash('error', 'Terjadi pagu minus pada beberapa data. Mohon cek kembali.');
-//                                        $this->redirect(array('index'));
-//                                    } else {
-//                                        if ($addedData) {
-//                                            foreach ($addedData as $data) {
-//                                                $paModel = new PackageAccount;
-//                                                $paModel->code = $data->code;
-//                                                $paModel->satker_code = $data->satker_code;
-//                                                $paModel->activity_code = $data->activity_code;
-//                                                $paModel->output_code = $data->output_code;
-//                                                $paModel->suboutput_code = $data->suboutput_code;
-//                                                $paModel->component_code = $data->component_code;
-//                                                $paModel->package_code = $data->subcomponent_code;
-//                                                $paModel->account_code = $data->account_code;
-//                                                $paModel->limit = $data->total_budget_limit;
-//                                                $package = Package::model()->findByAttributes(array('code' => "$data->subcomponent_code"));
-//                                                //@OPTIMIZE QUERY get only used field
-//                                                if ($package) {
-//                                                    $paModel->ppk_code = $package->ppk_code;
-//                                                    $paModel->province_code = $package->province_code;
-//                                                    $paModel->city_code = $package->city_code;
-//                                                }
-//                                                $paModel->save();
-//                                            }
-//                                        }
-//                                        foreach ($temps as $data) {
-//                                            $this->createBudget($data);
-//                                        }
-//                                        Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                                        unlink($filePath);
-//                                        $model->save();
-//                                        Yii::app()->user->setFlash('success', 'Data berhasil diimport ke database.bb');
-//                                        $this->redirect(array('index'));
-//                                    }
-//                                }
-//                            } else {//Tidak ada perubahan struktur
-//                                //If added package account data isn't exist
-//                                //If deleted package account data isn't exist
-//                                $temps = BudgetTemp::model()->findAll();
-//                                //@OPTIMIZE QUERY get only used field
-//                                if ($temps) {
-//                                    $overlimitBudgets = $this->getOverlimitBudget();
-//                                    if (count($overlimitBudgets) != 0) {
-//                                        foreach ($overlimitBudgets as $data) {
-//                                            $description = "Terjadi pagu minus pada anggaran dengan kode $data->code.";
-//                                            $this->createErrorDipa($data, $description);
-//                                        }
-//                                        Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                                        unlink($filePath);
-//                                        $model->save();
-//                                        Yii::app()->user->setFlash('error', 'Terjadi pagu minus pada beberapa data. Mohon cek kembali.');
-//                                        $this->redirect(array('index'));
-//                                    } else {
-//                                        foreach ($temps as $data) {
-//                                            $budget = new Budget;
-//                                            $budget->code = $data->code;
-//                                            $budget->dipa_id = $data->dipa_id;
-//                                            $budget->budget_year = $data->budget_year;
-//                                            $budget->satker_code = $data->satker_code;
-//                                            $budget->activity_code = $data->activity_code;
-//                                            $budget->output_code = $data->output_code;
-//                                            $budget->suboutput_code = $data->suboutput_code;
-//                                            $budget->component_code = $data->component_code;
-//                                            $budget->subcomponent_code = $data->subcomponent_code;
-//                                            $budget->account_code = $data->account_code;
-//                                            $budget->total_budget_limit = $data->total_budget_limit;
-//                                            //Update package account limit
-//                                            if ($budget->save()) {
-//                                                $paModel = PackageAccount::model()->findByAttributes(array('code' => "$budget->code"));
-//                                                //@OPTIMIZE QUERY get only used field
-//                                                if ($paModel) {
-//                                                    $paModel->limit = $budget->total_budget_limit;
-//                                                    $paModel->update();
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                                Yii::app()->db->createCommand()->truncateTable(BudgetTemp::model()->tableName());
-//                                unlink($filePath);
-//                                $model->save();
-//                                Yii::app()->user->setFlash('success', 'Data berhasil diimport ke database.aa');
-//                                $this->redirect(array('index'));
-//                            }
-//                        }
-//                    }
-//                }
+            $this->saveDipaAlongsideBudget($model, $objPHPExcel, $filePath, $fields);
         }
         $this->render('import', array(
             'model' => $model,
