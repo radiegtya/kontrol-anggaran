@@ -1,9 +1,0 @@
-{
-  "name": "Highcharts",
-  "version": "4.0.3",
-  "main": "js/highcharts.src.js",
-  "author": "",
-  "devDependencies": {
-    "grunt": "^0.4.5"
-  }
-}
