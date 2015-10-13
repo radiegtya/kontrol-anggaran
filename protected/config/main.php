@@ -75,7 +75,7 @@ return array(
 //            'charset' => 'utf8',
 //        ),
         'db' => array(
-            'connectionString' => 'mysql:host=localhost;dbname=anggaran',
+            'connectionString' => 'mysql:host=localhost;dbname=newanggaran',
             'emulatePrepare' => true,
             'username' => 'root',
             'password' => '',
