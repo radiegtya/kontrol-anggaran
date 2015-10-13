@@ -10,7 +10,7 @@ $(function() {
             {
 //        easing: 'swing',
         onStep: function(from, to, percent) {
-            $(this.el).find('.percent').text(Math.round(percent));
+            $(this.el).find('.percent').text(+percent.toFixed(2));
         },
         size: 120,
         barColor: '#4CAF50',

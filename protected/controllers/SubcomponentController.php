@@ -383,38 +383,38 @@ class SubcomponentController extends Controller {
      * Clear all data
      */
     public function actionClear() {
-        //validate if data already used for realization
-        $realizations = Realization::model()->findAll();
-        $realizationCodeArray = [];
-        foreach ($realizations as $r) {
-            array_push($realizationCodeArray, $r->package_code);
-        }
-
-        $criteria = new CDbCriteria();
-        $criteria->addNotInCondition('code', $realizationCodeArray);
-        $subcomponentsAllowDelete = Subcomponent::model()->findAll($criteria);
-        
-        foreach($subcomponentsAllowDelete as $s){
-            //remove subcomponents
-            $s->delete();
-        }
-        
-        if(count($subcomponentsAllowDelete) < Subcomponent::model()->count()){
-            Yii::app()->user->setFlash('error', "Terdapat beberapa data yang sudah terealisasi, sehingga data tidak bisa dihapus.");
-            $this->redirect(array('index'));
-        }
-
-//        //Check record data on database
-//        $exist = Subcomponent::model()->exists();
-//        if ($exist) {
-//            //Clear Data
-//            Yii::app()->db->createCommand()->truncateTable(Subcomponent::model()->tableName());
-//            Yii::app()->user->setFlash('success', 'Data berhasil dibersihkan.');
-//            $this->redirect(array('index'));
-//        } else {
-//            Yii::app()->user->setFlash('error', 'Data tidak ditemukan.');
+//        //validate if data already used for realization
+//        $realizations = Realization::model()->findAll();
+//        $realizationCodeArray = [];
+//        foreach ($realizations as $r) {
+//            array_push($realizationCodeArray, $r->package_code);
+//        }
+//
+//        $criteria = new CDbCriteria();
+//        $criteria->addNotInCondition('code', $realizationCodeArray);
+//        $subcomponentsAllowDelete = Subcomponent::model()->findAll($criteria);
+//        
+//        foreach($subcomponentsAllowDelete as $s){
+//            //remove subcomponents
+//            $s->delete();
+//        }
+//        
+//        if(count($subcomponentsAllowDelete) < Subcomponent::model()->count()){
+//            Yii::app()->user->setFlash('error', "Terdapat beberapa data yang sudah terealisasi, sehingga data tidak bisa dihapus.");
 //            $this->redirect(array('index'));
 //        }
+
+        //Check record data on database
+        $exist = Subcomponent::model()->exists();
+        if ($exist) {
+            //Clear Data
+            Yii::app()->db->createCommand()->truncateTable(Subcomponent::model()->tableName());
+            Yii::app()->user->setFlash('success', 'Data berhasil dibersihkan.');
+            $this->redirect(array('index'));
+        } else {
+            Yii::app()->user->setFlash('error', 'Data tidak ditemukan.');
+            $this->redirect(array('index'));
+        }
     }
 
     /**

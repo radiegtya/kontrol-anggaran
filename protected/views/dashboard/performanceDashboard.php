@@ -67,7 +67,7 @@
                             <p>Dari total pagu <span>Rp <?php echo number_format($limitPpk[$ppk->code], 2); ?></span></p>
                         </div>
                         <div class="chart-item-right">
-                            <div class="pie-chart" data-percent="<?php echo number_format($ratePpk[$ppk->code], 2); ?>"><span class="percent"><?php // echo number_format($ratePpk[$ppk->code], 2);                ?></span></div>
+                            <div class="pie-chart" data-percent="<?php echo number_format($ratePpk[$ppk->code], 2); ?>"><span class="percent"></span></div>
                         </div>
                     </div>
                 </div>

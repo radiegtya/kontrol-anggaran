@@ -274,13 +274,13 @@ class PackageAccount extends VAbstractActiveRecord {
         }
         return $overlimit;
     }
-    
+
     public function getOptionsCodeName() {
         $models = PackageAccount::model()->findAll();
         $options = array();
         foreach ($models as $model) {
             $name = $model->package->name;
-            $options[$model->code] = "[$model->code] | $name";
+            $options[$model->code] = "[$model->code] | $name" . ' - ' . $model->account->name;
         }
         return $options;
     }

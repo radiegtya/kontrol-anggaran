@@ -301,7 +301,7 @@ class ActivityController extends Controller {
         $objReader = new PHPExcel;
         $objReader = PHPExcel_IOFactory::createReader('Excel2007');
         $path = Yii::app()->basePath . '/../export/activity.xlsx';
-        $pathExport = Yii::app()->basePath . '/../files/Master Kegiatan.xlsx';
+        $pathExport = Yii::app()->basePath . '/../files/master-kegiatan.xlsx';
         $objPHPExcel = $objReader->load($path);
         $objPHPExcel->setActiveSheetIndex(0);
 

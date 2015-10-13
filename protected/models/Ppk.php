@@ -38,8 +38,7 @@ class Ppk extends VAbstractActiveRecord {
             array('code, ppk_name, official_name', 'required'),
             array('code', 'unique'),
             array('created_by, updated_by', 'numerical', 'integerOnly' => true),
-            array('code, ppk_name, official_name', 'length', 'max' => 256),
-            array('official_nip', 'length', 'max' => 18),
+            array('official_nip,code, ppk_name, official_name', 'length', 'max' => 256),
             array('created_at, updated_at', 'safe'),
             array('file', 'file', 'types' => 'xls,xlsx', 'allowEmpty' => true),
             // The following rule is used by search().
