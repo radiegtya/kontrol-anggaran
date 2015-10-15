@@ -504,21 +504,47 @@ class RealizationController extends Controller {
         $number = 0;
         $models = PackageAccount::model()->findAll();
         if ($models) {
+            $sheet->getProtection()->setSheet(true);
             foreach ($models as $model) {
                 $package = Subcomponent::model()->findByAttributes(array('code' => "$model->package_code"));
                 $account = Account::model()->findByAttributes(array('code' => "$model->account_code"));
                 $packageName = isset($package->name) ? $package->name : NULL;
                 $accountName = isset($account->name) ? $account->name : NULL;
                 $sheet->setCellValue('A' . ++$row, ++$number);
+                $this->cellColor($sheet, 'A' . $row, 'A3A3A3');
                 $sheet->setCellValueExplicit('B' . $row, $model->code, PHPExcel_Cell_DataType::TYPE_STRING);
+                $this->cellColor($sheet, 'B' . $row, 'A3A3A3');
                 $sheet->setCellValue('C' . $row, $packageName);
+                $this->cellColor($sheet, 'C' . $row, 'A3A3A3');
                 $sheet->setCellValue('D' . $row, $accountName);
+                $this->cellColor($sheet, 'D' . $row, 'A3A3A3');
                 $sheet->setCellValue('E' . $row, $model->limit);
+                $this->cellColor($sheet, 'E' . $row, 'A3A3A3');
                 $sheet->setCellValue('F' . $row, PackageAccount::model()->getTotal("$model->code")['realization']);
+                $this->cellColor($sheet, 'F' . $row, 'A3A3A3');
                 $sheet->setCellValue('G' . $row, 0);
+                $sheet->getStyle('G' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+                $sheet->getStyle('H' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+                $sheet->getStyle('I' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+                $sheet->getStyle('J' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+                $sheet->getStyle('K' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+                $sheet->getStyle('L' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+                $sheet->getStyle('M' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+                $sheet->getStyle('N' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+                $sheet->getStyle('O' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+                $sheet->getStyle('P' . $row)->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
             }
         }
         $objPHPExcel->getActiveSheet()->setTitle('Realisasi');
+    }
+
+    private function cellColor($sheet, $cells, $color) {
+        return $sheet->getStyle($cells)->getFill()->applyFromArray(array(
+                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                    'startcolor' => array(
+                        'rgb' => $color
+                    )
+        ));
     }
 
     //Write data to excel cell
