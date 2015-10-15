@@ -24,7 +24,7 @@ class PackageController extends Controller {
      * @return array access control rules
      */
     public function accessRules() {
-        return VAuth::getAccessRules('package', array('getCity', 'clear', 'export', 'entry', 'input', 'childUpdate','index'));
+        return VAuth::getAccessRules('package', array('getCity', 'clear', 'export', 'entry', 'input', 'childUpdate', 'index'));
     }
 
     /**
@@ -303,16 +303,16 @@ class PackageController extends Controller {
         if (isset($_POST['code'])) {
             if ($lastDipa) {
                 $total = count($_POST['code']);
-                for ($i = 0; $i <= $total; $i++) {
-                    if (isset($_POST['code'][$i]) && $_POST['code'][$i] != NULL && $_POST['ppk_code'][$i] != NULL && $_POST['city_code'][$i] != NULL) {
+                for ($i = 0; $i < $total; $i++) {
+                    if ($_POST['code'][$i] != NULL && $_POST['ppk_code'][$i] != NULL && $_POST['city_code'][$i] != NULL) {
                         $code = $_POST['code'][$i];
                         //Check existed record
                         $record = Package::model()->findByAttributes(array('code' => $code));
                         if ($record) {
                             $budgets = Budget::model()->findAllByAttributes(array('subcomponent_code' => "$record->code", 'dipa_id' => "$lastDipaId"));
-                            $record->ppk_code = $_POST['ppk_code'][$i];                            
+                            $record->ppk_code = $_POST['ppk_code'][$i];
                             $record->city_code = $_POST['city_code'][$i];
-                            $record->province_code = City::model()->findByAttributes(array('code'=>"$record->city_code"))->province_code;
+                            $record->province_code = City::model()->findByAttributes(array('code' => "$record->city_code"))->province_code;
                             if ($budgets) {
                                 foreach ($budgets as $budgetData) {
                                     $pAccount = PackageAccount::model()->findByAttributes(array('code' => "$budgetData->code"));
@@ -337,9 +337,9 @@ class PackageController extends Controller {
                                 $data->suboutput_code = "$budget->suboutput_code";
                                 $data->name = $budget->subcomponentCode->name;
                                 $data->component_code = "$budget->component_code";
-                                $data->ppk_code = $_POST['ppk_code'][$i];                                
+                                $data->ppk_code = $_POST['ppk_code'][$i];
                                 $data->city_code = $_POST['city_code'][$i];
-                                $data->province_code = City::model()->findByAttributes(array('code'=>"$data->city_code"))->province_code;
+                                $data->province_code = City::model()->findByAttributes(array('code' => "$data->city_code"))->province_code;
                                 $budgets = Budget::model()->findAllByAttributes(array('subcomponent_code' => "$data->code", 'dipa_id' => "$lastDipaId"));
                                 if ($budgets) {
                                     foreach ($budgets as $dataBudget) {
@@ -365,6 +365,9 @@ class PackageController extends Controller {
                                 $this->redirect(array('index'));
                             }
                         }
+                    } else {
+                        Yii::app()->user->setFlash('error', "Mohon isikan data secara lengkap.");
+                        $this->redirect(array('entry'));
                     }
                 }
             } else {

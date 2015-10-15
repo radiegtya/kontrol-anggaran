@@ -224,8 +224,8 @@ class RealizationController extends Controller {
 
         if (isset($_POST['packageAccount_code'])) {
             $total = count($_POST['packageAccount_code']);
-            for ($i = 0; $i <= $total; $i++) {
-                if (isset($_POST['packageAccount_code'][$i]) && $_POST['packageAccount_code'][$i] != NULL && $_POST['total_spm'][$i] != NULL) {
+            for ($i = 0; $i < $total; $i++) {
+                if ($_POST['packageAccount_code'][$i] != NULL && $_POST['total_spm'][$i] != NULL) {
                     $overlimit = PackageAccount::model()->overlimit($_POST['packageAccount_code'][$i], $_POST['total_spm'][$i]);
                     $code = $_POST['packageAccount_code'][$i];
                     $packageAccount = PackageAccount::model()->findByAttributes(array('code' => "$code"));
@@ -255,14 +255,14 @@ class RealizationController extends Controller {
                         $data->spm_date = $_POST['spm_date'][$i];
                         $data->up_ls = $_POST['up_ls'][$i];
                         $data->save();
-
-                        Yii::app()->user->setFlash('success', "Data berhasil disimpan.");
-                        $this->redirect(array('index'));
                     }
                 } else {
                     Yii::app()->user->setFlash('error', "Mohon isikan Kode Akun Paket dan Total SPM.");
+                    $this->redirect(array('entry'));
                 }
             }
+            Yii::app()->user->setFlash('success', "Data berhasil disimpan.");
+            $this->redirect(array('index'));
         }
         $this->render('entry', array(
             'model' => $model,
@@ -532,7 +532,7 @@ class RealizationController extends Controller {
                 $rest[$data->packageAccount_code] = 0;
 
                 $pAccount = PackageAccount::model()->findByAttributes(array('code' => "$data->packageAccount_code"));
-                
+
                 $sheet->setCellValue('A' . ++$row, $data->packageAccount_code);
                 $sheet->setCellValue('B' . $row, $pAccount->limit);
                 $sheet->setCellValue('C' . $row, PackageAccount::model()->getTotal($pAccount->code)['realization']);

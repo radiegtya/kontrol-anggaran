@@ -55,15 +55,9 @@ and open the template in the editor.
 
                     <nav class="menu-container">
                         <ul class=" sf-menu sf-vertical sf-js-enabled sf-arrows">
-                            <!--<li><a href="<?php // echo Yii::app()->baseUrl . '/site/index';                                          ?>"><i class="fa fa-fw fa-home"></i> <span>Home</span></a></li>-->
+                            <!--<li><a href="<?php // echo Yii::app()->baseUrl . '/site/index';                                               ?>"><i class="fa fa-fw fa-home"></i> <span>Home</span></a></li>-->
                             <?php if ($group == 'administrator' || $group == 'operator' || $group == 'eksekutif' || $group == 'super-admin'): ?>
-                                <?php
-                                $class = '';
-                                if (Yii::app()->controller->getRoute() == 'dashboard/mainChart' || Yii::app()->controller->getRoute() == 'dashboard/accountChart' || Yii::app()->controller->getRoute() == 'dashboard/activityChart') {
-                                    $class = 'active';
-                                }
-                                ?>
-                                <li class="<?php echo $class; ?>"><a href="<?php echo Yii::app()->baseUrl . '/dashboard/mainChart'; ?>" class="sf-with-ul"><i class="fa fa-fw fa-dashboard"></i><span>Dashboard</span></a></li>
+
                                 <?php
                                 $class = '';
                                 if (Yii::app()->controller->getRoute() == 'dashboard/performanceDashboard') {
@@ -71,6 +65,13 @@ and open the template in the editor.
                                 }
                                 ?>
                                 <li class="<?php echo $class; ?>"><a href="<?php echo Yii::app()->baseUrl . '/dashboard/performanceDashboard'; ?>" class="sf-with-ul"><i class="fa fa-fw fa-dashboard"></i><span>Performance </br>Dashboard</span></a></li>
+                                <?php
+                                $class = '';
+                                if (Yii::app()->controller->getRoute() == 'dashboard/mainChart' || Yii::app()->controller->getRoute() == 'dashboard/accountChart' || Yii::app()->controller->getRoute() == 'dashboard/activityChart') {
+                                    $class = 'active';
+                                }
+                                ?>
+                                <li class="<?php echo $class; ?>"><a href="<?php echo Yii::app()->baseUrl . '/dashboard/mainChart'; ?>" class="sf-with-ul"><i class="fa fa-fw fa-dashboard"></i><span>Dashboard</span></a></li>
                             <?php endif; ?> 
                             <?php /**
                               <?php
@@ -123,9 +124,6 @@ and open the template in the editor.
                                 ?>
                                 <li class="<?php echo $class; ?>">
                                     <a href="<?php echo Yii::app()->baseUrl . '/package/index'; ?>"><i class="fa fa-fw fa-book"></i><span>Informasi </br>Paket Pekerjaan</span></a>
-                                    <ul>
-                                        <li><a href="<?php echo Yii::app()->baseUrl . '/package/index'; ?>"><i class="fa fa-fw fa-table"></i><span>Entri/Revisi</span></a></li>
-                                    </ul>
                                 </li>
                                 <?php
                                 $class = '';
@@ -135,10 +133,6 @@ and open the template in the editor.
                                 ?>
                                 <li class="<?php echo $class; ?>">
                                     <a href="<?php echo Yii::app()->baseUrl . '/realization/index'; ?>"><i class="fa fa-fw fa-ticket"></i><span>Realisasi</span></a>
-                                    <ul>
-                                        <li><a href="<?php echo Yii::app()->baseUrl . '/realization/index'; ?>"><i class="fa fa-fw fa-table"></i><span>Informasi Realisasi</span></a></li>
-                                        <li><a href="<?php echo Yii::app()->baseUrl . '/realization/create'; ?>"><i class="fa fa-fw fa-plus"></i><span>Entri</span></a></li>
-                                    </ul>
                                 </li>
                             <?php endif; ?>
                             <?php
