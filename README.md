@@ -1,54 +1,160 @@
-Yii-Godog V-0.1
+Kontrol Anggaran v1.0
 =======
 
-copyright vlocorporation 2013
+copyright Piyiku.inc (PT. Piyiku Global Sinergi) since 2014
 
-<h2>Yii godog is a yii boilerplate to making some app very fast using yii framework. It's include yii booster/bootstrap boilerplate with themes, gii, extension etc</h2>
+<h2>Mengontrol Realisasi terhadap Pagu yg tersedia pada suatu Satker/Kegiatan/PPK/Output/..sd.../Akun</h2>
 
 <h3>Teams</h3>
 <ul>
     <li>Project Lead: Ega Radiegtya / radiegtya@yahoo.co.id</li>
-    <li>Developer: Wahyu Abriyanto</li>
+    <li>Developer: Ahmad Dhani</li>
     <li>Designer: Pras Abdillah</li>
 </ul> 
 
-========
 
-<h2>Upcoming V-0.2</h2>
 
-<h3>Designer Task</h3>
+<h2>Fitur & Alur</h2>
+
+<h3>1. Master Satker</h3>
 <ul>
-    <li>Create admin theme which menus on top [asign:Pras Abdilah][backlog]</li>
-    <li>Create admin theme which menus on left side [asign:Pras Abdilah][backlog]</li>    
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>    
 </ul>
 
-<h3>Developer Task</h3>
+<h3>2. Master Kegiatan</h3>
 <ul>
-    <li>Auto generate dropdown if foreign key in "views/controller_id/_form" [asign:Ega Radiegtya][done]</li>
-    <li>Auto generate enum dropdown if field is enum in "views/controller_id/_form" [asign:Ega Radiegtya][unsolved]</li>
-    <li>Auto generate file input if field is image in "views/controller_id/_form" (set field to 257 length) [asign:Ega Radiegtya][done]</li>
-    <li>Auto generate dropdown search and $data->related_table->related_field in "views/controller_id/admin" [asign:Ega Radiegtya][done]</li>
-    <li>Auto generate $data->related_table->related_field in "views/controller_id/view" [asign:Ega Radiegtya][done]</li>
-    <li>Auto generate form in "views/controller_id/_search", which is dropdown, enum etc [asign:Ega Radiegtya][done]</li>
-    <li>Auto generate index set $data->related_table->related_field in "views/controller_id/_view" [asign:Ega Radiegtya][done]</li>
-    <li>Auto generate editable view [asign:Ega Radiegtya][done]</li>
-    <li>Auto generate form calendar for datatype date in _form, _search [asign:Ega Radiegtya][done]</li>
-    <li>Auto generate form dropdown for datatype enum in _form, admin, view, _search [asign:Ega Radiegtya][done]</li>
-    <li>Auto generate image preview in _form, index, view, and admin [asign:Ega Radiegtya][done]</li>    
-    <li>Auto generate help center like facebook [asign:Ega Radiegtya][backlog]</li>        
-    <li>Auto generate Rating system [asign:Ega Radiegtya][backlog]</li>
-    <li>Auto generate Polling system [asign:Ega Radiegtya][backlog]</li>    
-    <li>Auto generate binary tree menus [asign:Ega Radiegtya][backlog]</li>
-    <li></li>
-    <li>Auto generate language translation [asign:Wahyu Abriyanto][backlog]</li>
-    <li>Auto generate excel [asign:Wahyu Abriyanto][backlog]</li>
-    <li>Auto generate pdf [asign:Wahyu Abriyanto][backlog]</li>    
-    <li>Auto generate ajax upload multiple file [asign:Wahyu Abriyanto][backlog]</li>    
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>    
 </ul>
 
-<h3>Bug</h3>
+<h3>3. Master PPK</h3>
 <ul>
-    <li>Currently no bug found</li>
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>  
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>     
 </ul>
 
+<h3>4. Master Output</h3>
+<ul>
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li> 
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>      
+</ul>
 
+<h3>5. Master Suboutput</h3>
+<ul>
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>   
+	<li>
+		Validasi jika data RKAKL sudah dihapus, tetapi data master pada aplikasi sudah direalisasikan. Daftar error bisa dicetak
+	</li>		
+</ul>
+
+<h3>6. Master Komponen</h3>
+<ul>
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>   
+	<li>
+		Validasi jika data RKAKL sudah dihapus, tetapi data master pada aplikasi sudah direalisasikan. Daftar error bisa dicetak
+	</li>		
+</ul>
+
+<h3>7. Master Subkomponen</h3>
+<ul>
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>   
+	<li>
+		Validasi jika data RKAKL sudah dihapus, tetapi data master pada aplikasi sudah direalisasikan. Daftar error bisa dicetak
+	</li>		
+</ul>
+
+<h3>8. Master Akun</h3>
+<ul>
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>	
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>   
+</ul>
+
+<h3>9. Master Provinsi</h3>
+<ul>
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>	
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>   
+</ul>
+
+<h3>10. Master Kab Kota</h3>
+<ul>
+	<li>Export Data / Download Form berbentuk excel</li>   
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>	
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>   
+</ul>
+
+<h3>11. Master DIPA/POK</h3>
+<ul>	  
+    <li>Bersihkan Data</li>
+    <li>Import Data excel</li>	
+	<li>Validasi Import apakah file excel benar</li>
+	<li>Validasi Import kelengkapan data excel</li>
+	<li>Validasi Input Tahun Anggaran</li>
+	<li>Validasi Data RKAKL tidak ada, tetapi ada pada data Master Aplikasi (Master Paket/Subkomponen)</li>   
+	<li>Validasi Data RKAKL ada, tetapi tidak ada pada data Master Aplikasi (Master Paket/Subkomponen)</li>
+	<li>Validasi Data RKAKL tidak ada, tetapi data tsb sudah direalisasikan</li>
+	<li>Validasi Data RKAKL terupdate terhadap Master, jika pagu kurang dari data Master yg sudah terealisasi maka cancel process</li>
+	<li>Semua data error di atas bisa dicetak sebagai bantuan koreksi RKAKL</li>
+</ul>
+
+<h3>12. Informasi Paket Pekerjaan</h3>
+<ul>
+	<li>Assign Kode Paket/Subkomponen terhadap kode PPK dan Kota</li>
+	<li>Validasi Input, Kode Paket yg sudah terpakai tidak dapat dipakai lagi</li>	
+	<li>Input dapat dilakukan secara multiple/batch</li>   
+    <li>Bersihkan Data</li>    	
+</ul>
+
+<h3>13. Realisasi</h3>
+<ul>
+	<li>Entri Manual Realisasi secara multiple/batch</li>
+	<li>Entri Realisasi dengan mendownload excel yg sudah disediakan</li>	
+	<li>Excel inputan yg disediakan menyediakan inputan disable, dan enable utk field yg dapat diinput sehingga meminimalisir kesalahan</li>
+	<li>Validasi Inputan realisasi terhadap pagu limit</li>
+	<li>Daftar Error bisa dicetak</li>
+	<li>Import Data Realisasi setelah diinput</li>   
+    <li>Bersihkan Data</li>    		
+</ul>
+
+<h3>14. Laporan</h3>
+<ul>
+	<li>Download laporan keseluruhan/lengkap berbentuk excel meliputi satker .. sd .. realisasi</li>	
+</ul>
+
+<h3>15. Dashboard dan Performance Dashboard</h3>
+<ul>
+	<li>Dashboard digunakan untuk melakukan pengecekan realisasi pada tiap tingkatan satker .. sd .. akun</li>
+	<li>Perfomance dashboard digunakan untuk melakukan pengecekan realisasi terhadap PPK, dan report keseluruhan</li>		    
+</ul>
