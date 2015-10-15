@@ -172,7 +172,7 @@ class SiteController extends Controller {
     //Write data to excel cell
     public function exportExcel($objPHPExcel, $models) {
         $sheet = $objPHPExcel->getActiveSheet();
-        $sheet->setCellValueExplicit('J2', "Tanggal:  " . date('j F Y'), PHPExcel_Cell_DataType::TYPE_STRING);
+        $sheet->setCellValueExplicit('A2', "Tanggal:  " . date('j F Y'), PHPExcel_Cell_DataType::TYPE_STRING);
         $row = 3;
         if ($models) {
             foreach ($models as $model) {
@@ -187,6 +187,7 @@ class SiteController extends Controller {
                 $sheet->setCellValue('I' . $row, isset($model->limit) ? $model->limit : NULL);
                 $realization = PackageAccount::model()->getTotal($model->code)['realization'];
                 $sheet->setCellValue('J' . $row, $realization);
+                $sheet->setCellValueExplicit('K' . $row, isset($model->ppk_code) ? $model->ppk->official_name : NULL, PHPExcel_Cell_DataType::TYPE_STRING);
             }
         }
         $objPHPExcel->getActiveSheet()->setTitle('Laporan');
