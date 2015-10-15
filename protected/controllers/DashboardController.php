@@ -791,7 +791,9 @@ class DashboardController extends Controller {
         }
         //Get budget information for each ppk
         $ppks = Ppk::model()->findAll();
-        $limitPpk = array();
+        $limitPpk = [];
+        $realizationPpk = [];
+        $ratePpk = [];
         if ($ppks) {
             foreach ($ppks as $ppk) {
                 $limitPpk[$ppk->code] = 0;

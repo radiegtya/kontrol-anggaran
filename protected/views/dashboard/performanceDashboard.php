@@ -4,7 +4,7 @@
             <div class="dashboard-a-left">
                 <h3>
                     <h3>
-                        SATKER                                   <em><?php echo $data->name; ?></em>
+                        SATKER                                   <em><?php echo isset($data->name)?$data->name:''; ?></em>
                     </h3>
 
                     <h4>Dana Terserap :</h4>

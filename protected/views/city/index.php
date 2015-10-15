@@ -18,7 +18,7 @@
                 //'id',
                 array(
                     'name' => 'province_code',
-                    'value' => '$data->province->name',
+                    'value' => 'isset($data->province->name)?$data->province->name:""',
                     'filter' => Province::model()->getOptionsCodeName(),
                 ),
                 'name',
