@@ -93,8 +93,8 @@ and open the template in the editor.
                                 <li class="<?php echo $class; ?>">
                                     <a><i class="fa fa-fw fa-database"></i><span>Master</span></a>
                                     <ul style="height: 60vh">
-                                        <li><a href="<?php echo Yii::app()->baseUrl . '/activity/index'; ?>">Kegiatan</a></li>
                                         <li><a href="<?php echo Yii::app()->baseUrl . '/satker/index'; ?>">Satker</a></li>
+                                        <li><a href="<?php echo Yii::app()->baseUrl . '/activity/index'; ?>">Kegiatan</a></li>                                        
                                         <li><a href="<?php echo Yii::app()->baseUrl . '/ppk/index'; ?>">PPK</a></li>
                                         <li><a href="<?php echo Yii::app()->baseUrl . '/output/index'; ?>">Output</a></li>
                                         <li><a href="<?php echo Yii::app()->baseUrl . '/suboutput/index'; ?>">Suboutput</a></li>
