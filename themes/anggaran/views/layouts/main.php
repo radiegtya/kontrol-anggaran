@@ -148,7 +148,7 @@ and open the template in the editor.
                                 $class = 'active';
                             }
                             ?>
-                            <li class="<?php echo $class; ?>"><a href="<?php echo Yii::app()->baseUrl . '/site/guide'; ?>"><i class="fa fa-fw fa-life-ring "></i> <span>User Guide</span></a></li>
+                            <li class="<?php echo $class; ?>"><a href="<?php echo Yii::app()->baseUrl . '/manual_book/Manual_Book.docx'; ?>"><i class="fa fa-fw fa-life-ring "></i> <span>User Guide</span></a></li>
                             <?php if ($group == 'administrator' || $group == 'super-admin'): ?>
                                 <?php
                                 $class = '';
