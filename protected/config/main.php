@@ -78,7 +78,7 @@ return array(
             'connectionString' => 'mysql:host=localhost;dbname=anggaran',
             'emulatePrepare' => true,
             'username' => 'root',
-            'password' => 'p1yiku65',
+            'password' => '',
             'charset' => 'utf8',
         ),
 //        'db' => array(

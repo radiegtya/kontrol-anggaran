@@ -11,7 +11,7 @@
         ?>
         <a href="<?php echo yii::app()->baseUrl; ?>/component/export" class="btn btn-primary"><i class="fa fa fa-download"></i> Export</a>
         <a href="<?php echo yii::app()->baseUrl; ?>/component/import" class="btn btn-primary"><i class="fa fa fa-upload"></i> Import</a>
-        <a href="<?php echo yii::app()->baseUrl; ?>/component/clear" onclick="return confirm('Yakin ingin menghapus semua data komponen?')" class="btn btn-primary"><i class="fa fa fa-trash"></i>Bersihkan Data</a>
+        <!--<a href="<?php echo yii::app()->baseUrl; ?>/component/clear" onclick="return confirm('Yakin ingin menghapus semua data komponen?')" class="btn btn-primary"><i class="fa fa fa-trash"></i>Bersihkan Data</a>-->
 
     </div>
     <div class="panel-body">

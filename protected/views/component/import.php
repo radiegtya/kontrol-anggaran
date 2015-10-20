@@ -35,7 +35,7 @@
         <a href="<?php echo yii::app()->baseUrl; ?>/component/exportError" class="btn btn-primary"><i class="fa fa fa-download"></i> Export Error</a>
     </div>
     <div class="panel-body">
-        <h2>Daftar Error Import</h2>
+        <h2>Daftar Error Import Karena Sudah Terealisasi</h2>
 
         <?php
         $this->widget('bootstrap.widgets.TbGridView', array(

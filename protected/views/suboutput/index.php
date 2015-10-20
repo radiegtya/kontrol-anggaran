@@ -11,7 +11,7 @@
         ?>
         <a href="<?php echo yii::app()->baseUrl; ?>/suboutput/export" class="btn btn-primary"><i class="fa fa fa-download"></i> Export</a>
         <a href="<?php echo yii::app()->baseUrl; ?>/suboutput/import" class="btn btn-primary"><i class="fa fa fa-upload"></i> Import</a>
-        <a href="<?php echo yii::app()->baseUrl; ?>/suboutput/clear" onclick="return confirm('Yakin ingin menghapus semua data suboutput?')" class="btn btn-primary"><i class="fa fa fa-trash"></i>Bersihkan Data</a>
+        <!--<a href="<?php echo yii::app()->baseUrl; ?>/suboutput/clear" onclick="return confirm('Yakin ingin menghapus semua data suboutput?')" class="btn btn-primary"><i class="fa fa fa-trash"></i>Bersihkan Data</a>-->
 
     </div>
     <div class="panel-body">
